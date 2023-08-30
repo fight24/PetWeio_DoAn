@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">PetWeio</string>
+    <string name="loading">Loading…</string>
+    <string name="no_internet_connection">No internet connection!</string>
+    <string name="msg_finding_and_tra">Finding and tracking your pet quickly and accurately. Please join us for a new experience with our products</string>
+    <string name="msg_app_version_1_0">App Version 1.0.0</string>
+    <string name="lbl_signup">SignUp</string>
+    <string name="lbl_pets_are_here">Pets are here.</string>
+    <string name="lbl_login">Sign In</string>
+    <string name="lbl_welcome_back">Welcome
+Back!</string>
+    <string name="lbl_email_address">Email Address</string>
+    <string name="lbl_password">Password</string>
+    <string name="msg_forgot_password">Forgot Password?</string>
+    <string name="btn_close">Close</string>
+    <string name="or_sign_in_other_way">or sign in other way</string>
+    <string name="remember_password">Remember password</string>
+    <string name="msg_terms_conditi">Terms &amp; Conditions</string>
+    <string name="lbl_let_s_start">Let\u2019s Start.</string>
+    <string name="lbl_user_name">User Name</string>
+
+</resources>

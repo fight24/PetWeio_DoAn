@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IntroductionActivity"
+    >
+    <FrameLayout
+        android:id="@+id/frameStackbackground"
+        style="@style/groupStylewhite_A700"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/frameIntroduction"
+            style="@style/groupStylewhite_A700"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start">
+
+            <View
+                android:id="@+id/viewBackground"
+                android:layout_width="@dimen/_375pxh"
+                android:layout_height="@dimen/_767pxh"
+                android:layout_gravity="start"
+                android:background="@drawable/gradient_status_bar"
+                tools:ignore="VisualLintBounds" />
+
+            <LinearLayout
+                android:id="@+id/linearColumntitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginStart="@dimen/_40pxh"
+                android:layout_marginTop="@dimen/_10pxv"
+                android:layout_marginEnd="@dimen/_40pxh"
+                android:layout_marginBottom="@dimen/_9pxv"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtTitle"
+                    style="@style/txtMontserratsemibold20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="@dimen/_6pxh"
+                    android:layout_marginEnd="@dimen/_10pxh"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/lbl_pets_are_here"
+                    tools:ignore="TextSizeCheck"
+                    tools:text="@string/lbl_pets_are_here" />
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    style="@style/txtMontserratmedium14"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4pxh"
+                    android:layout_marginTop="@dimen/_20pxv"
+                    android:layout_marginEnd="@dimen/_10pxh"
+                    android:gravity="start"
+                    android:lineSpacingExtra="@dimen/_6pxh"
+                    android:text="@string/msg_finding_and_tra"
+                    tools:ignore="TextSizeCheck"
+                    tools:text="@string/msg_finding_and_tra" />
+
+                <LinearLayout
+                    android:id="@+id/linearButtonBG"
+                    style="@style/groupStyleblack_900_0ccornerRadius"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_32pxv"
+                    android:gravity="start"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnLogin"
+                        style="@style/btnSolidRounded"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.74"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/_30pxh"
+                        android:paddingTop="@dimen/_15pxv"
+                        android:paddingEnd="@dimen/_30pxh"
+                        android:paddingBottom="@dimen/_15pxv"
+                        android:singleLine="true"
+                        android:text="@string/lbl_login"
+                        android:textAllCaps="false"
+                        tools:ignore="TextSizeCheck,VisualLintButtonSize"
+                        tools:text="@string/lbl_login" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnSignup"
+                        style="@style/btnMontserratsemiBold14"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.74"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/_30pxh"
+                        android:paddingTop="@dimen/_15pxv"
+                        android:paddingEnd="@dimen/_30pxh"
+                        android:paddingBottom="@dimen/_15pxv"
+                        android:singleLine="true"
+                        android:text="@string/lbl_signup"
+                        android:textAllCaps="false"
+                        tools:ignore="TextSizeCheck,VisualLintButtonSize"
+                        tools:text="@string/lbl_signup" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtVersion"
+                    style="@style/txtMontserratmedium10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/_81pxh"
+                    android:layout_marginTop="@dimen/_29pxv"
+                    android:layout_marginEnd="@dimen/_81pxh"
+                    android:ellipsize="end"
+                    android:lineSpacingExtra="@dimen/_3pxh"
+                    android:singleLine="true"
+                    android:text="@string/msg_app_version_1_0"
+                    tools:ignore="TextSizeCheck"
+                    tools:text="@string/msg_app_version_1_0" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/frameGraphicPart"
+                android:layout_width="@dimen/_373pxh"
+                android:layout_height="@dimen/_345pxv"
+                android:layout_gravity="top|center"
+                android:layout_marginStart="@dimen/_2pxh"
+                android:layout_marginTop="@dimen/_40pxv"
+                android:layout_marginBottom="@dimen/_40pxv"
+                tools:ignore="VisualLintBounds">
+
+                <ImageView
+                    android:id="@+id/imageRectangleSeventeen"
+                    android:layout_width="@dimen/_120pxh"
+                    android:layout_height="@dimen/_304pxh"
+                    android:layout_gravity="end"
+                    android:layout_marginStart="@dimen/_10pxh"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/img_rectangle17"
+                    tools:ignore="ContentDescription,VisualLintBounds"
+                    tools:src="@drawable/img_rectangle17" />
+
+                <ImageView
+                    android:id="@+id/imageMyLocationOne"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_330pxv"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginTop="@dimen/_10pxv"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/img_mylocation1"
+                    tools:ignore="ContentDescription,ImageContrastCheck"
+                    tools:src="@drawable/img_mylocation1" />
+            </FrameLayout>
+        </FrameLayout>
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

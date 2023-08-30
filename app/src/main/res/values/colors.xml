@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black_900_87">#87000000</color>
+    <color name="bluegray_800">#343a48</color>
+    <color name="green_50">#e2f2e8</color>
+    <color name="black_900_0c">#0c000000</color>
+    <color name="white_A700">#ffffff</color>
+    <color name="trans">#00000000</color> <!-- Màu trong suốt -->
+    <color name="gradient_status_bar">#FF000000</color> <!-- Mã màu tùy ý -->
+    <color name="gray_300">#d7dbe6</color>
+    #31394E
+    <color name="foreground_color_green">#31394E</color>
+    <color name="pink_50">#f4e1e7</color>
+    <color name="foreground_color_pink">#472A33</color>
+    <color name="purple_100">#dbc2ca</color>
+    <color name="black_900">#000000</color>
+    <color name="indigo_50">#ebeffa</color>
+</resources>
