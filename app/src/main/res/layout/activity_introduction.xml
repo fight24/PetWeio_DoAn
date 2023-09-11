@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IntroductionActivity"
+    tools:context=".Introduction.IntroductionActivity"
     >
     <FrameLayout
         android:id="@+id/frameStackbackground"
@@ -130,6 +130,7 @@
                     android:lineSpacingExtra="@dimen/_3pxh"
                     android:singleLine="true"
                     android:text="@string/msg_app_version_1_0"
+                    android:textColor="@color/trans"
                     tools:ignore="TextSizeCheck"
                     tools:text="@string/msg_app_version_1_0" />
             </LinearLayout>

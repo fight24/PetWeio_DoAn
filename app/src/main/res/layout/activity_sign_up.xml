@@ -8,7 +8,7 @@
     >
 
     <FrameLayout
-        android:id="@+id/frameStackbackground"
+        android:id="@+id/frameStackBackgroundSignUp"
         style="@style/groupStylewhite_A700"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
-            android:id="@+id/frameSignIn"
+            android:id="@+id/frameSignUp"
             style="@style/groupStylewhite_A700"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,7 +31,7 @@
                 android:background="@color/green_50" />
 
             <LinearLayout
-                android:id="@+id/linearColumn"
+                android:id="@+id/linearColumnSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
@@ -40,8 +40,8 @@
 
                 <ImageButton
                     android:id="@+id/btnCloseSignUp"
-                    android:layout_width="@dimen/_12pxh"
-                    android:layout_height="@dimen/_12pxh"
+                    android:layout_width="@dimen/_20pxh"
+                    android:layout_height="@dimen/_20pxh"
                     android:layout_gravity="end"
                     android:layout_marginStart="@dimen/_31pxh"
                     android:layout_marginTop="@dimen/_30pxv"
@@ -54,12 +54,14 @@
                     tools:src="@drawable/img_close" />
 
                 <FrameLayout
-                    android:id="@+id/frameIllustration"
+                    android:id="@+id/frameIllustrationSignUp"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_191pxv"
+                    android:layout_height="@dimen/_200pxv"
                     android:layout_gravity="start"
                     android:layout_marginTop="@dimen/_6pxv"
-                    android:layout_marginEnd="@dimen/_10pxh">
+                    android:layout_marginEnd="@dimen/_10pxh"
+
+                    >
 
                     <FrameLayout
                         android:id="@+id/frameLocationcurren"
@@ -137,33 +139,34 @@
                         </FrameLayout>
 
                     </FrameLayout>
+
                     <ImageView
                         android:id="@+id/imageRectangleFour"
                         android:layout_width="@dimen/_75pxh"
-                        android:layout_height="@dimen/_40pxh"
+                        android:layout_height="@dimen/_49pxv"
                         android:layout_gravity="bottom|end"
                         android:layout_marginStart="0dp"
-                        android:layout_marginEnd="@dimen/_70pxv"
+                        android:layout_marginEnd="@dimen/_60pxh"
                         android:scaleType="fitXY"
                         android:src="@drawable/img_rectangle_49x75"
-                        tools:ignore="ContentDescription"
+                        tools:ignore="ContentDescription,ImageContrastCheck"
                         tools:src="@drawable/img_rectangle_49x75" />
 
                     <View
                         android:id="@+id/lineLineOne"
                         android:layout_width="@dimen/_330pxh"
-                        android:layout_height="2dp"
+                        android:layout_height="0.5dp"
                         android:layout_gravity="bottom|start"
                         android:background="@color/black_900" />
                 </FrameLayout>
 
                 <TextView
-                    android:id="@+id/txtTitle"
+                    android:id="@+id/txtTitleSignUp"
                     style="@style/txtMontserratsemibold50Green"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10pxh"
-                    android:layout_marginTop="@dimen/_58pxv"
+                    android:layout_marginTop="@dimen/_80pxv"
                     android:layout_marginEnd="@dimen/_10pxh"
                     android:ellipsize="end"
                     android:gravity="center_horizontal"
@@ -183,7 +186,7 @@
                     android:orientation="horizontal">
 
                     <EditText
-                        android:id="@+id/edtEmail"
+                        android:id="@+id/edtEmailSignUp"
                         style="@style/txtMontserratmedium14"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -192,11 +195,11 @@
                         android:autofillHints=""
                         android:background="@color/trans"
                         android:hint="@string/lbl_email_address"
-                        android:inputType="text"
+                        android:inputType="textEmailAddress"
                         android:minHeight="48dp"
                         android:singleLine="true"
                         android:textColorHint="@color/black"
-                        tools:ignore="TextSizeCheck,VisualLintTextFieldSize" />
+                        tools:ignore="TextFields,TextSizeCheck,VisualLintTextFieldSize" />
 
                     <ImageView
                         android:id="@+id/imgUser"
@@ -231,7 +234,7 @@
                     android:orientation="horizontal">
 
                     <EditText
-                        android:id="@+id/edtUser"
+                        android:id="@+id/edtUserSignUp"
                         style="@style/txtMontserratmedium14"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -279,7 +282,7 @@
                     android:orientation="horizontal">
 
                     <EditText
-                        android:id="@+id/edtPassword"
+                        android:id="@+id/edtPasswordSignUp"
                         style="@style/txtMontserratmedium14"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

@@ -3,19 +3,16 @@ package com.petweio.projectdoan.Sign;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
+import com.petweio.projectdoan.MyAppCompatActivity;
 import com.petweio.projectdoan.R;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends MyAppCompatActivity {
 
     private EditText edtUser,edtPass,edtEmail;
     private ImageButton btnClose;
@@ -27,8 +24,6 @@ public class SignUpActivity extends AppCompatActivity {
         init();
     }
     private void init(){
-        Window window = getWindow();
-        window.setStatusBarColor(ContextCompat.getColor(this,R.color.green_50));
 
         btnClose = findViewById(R.id.btnCloseSignUp);
 
@@ -39,11 +34,11 @@ public class SignUpActivity extends AppCompatActivity {
         }));
 
 
-        edtUser = findViewById(R.id.edtUser);
-        edtPass = findViewById(R.id.edtPassword);
-        edtEmail = findViewById(R.id.edtEmail);
-        frameStackRectangle = findViewById(R.id.frameStackbackground);
-        LinearLayout linearColumn = findViewById(R.id.linearColumn);
+        edtUser = findViewById(R.id.edtUserSignUp);
+        edtPass = findViewById(R.id.edtPasswordSignUp);
+        edtEmail = findViewById(R.id.edtEmailSignUp);
+        frameStackRectangle = findViewById(R.id.frameIllustrationSignUp);
+        LinearLayout linearColumn = findViewById(R.id.linearColumnSignUp);
 
 
         // set focus edit text, password

@@ -15,7 +15,8 @@
     <color name="trans">#00000000</color> <!-- Màu trong suốt -->
     <color name="gradient_status_bar">#FF000000</color> <!-- Mã màu tùy ý -->
     <color name="gray_300">#d7dbe6</color>
-    #31394E
+    <color name="home_20">#331194AA</color>
+    <color name="text_pink">#600251</color>
     <color name="foreground_color_green">#31394E</color>
     <color name="pink_50">#f4e1e7</color>
     <color name="foreground_color_pink">#472A33</color>

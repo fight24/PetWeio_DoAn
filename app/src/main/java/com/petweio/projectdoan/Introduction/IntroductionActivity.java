@@ -1,10 +1,7 @@
-package com.petweio.projectdoan;
+package com.petweio.projectdoan.Introduction;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -12,21 +9,19 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-
+import com.petweio.projectdoan.MyAppCompatActivity;
+import com.petweio.projectdoan.R;
 import com.petweio.projectdoan.Sign.LoginActivity;
 import com.petweio.projectdoan.Sign.SignUpActivity;
 
 
-public class IntroductionActivity extends AppCompatActivity {
+public class IntroductionActivity extends MyAppCompatActivity {
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStatusBar();
         setContentView(R.layout.activity_introduction);
         init();
     }
@@ -35,14 +30,7 @@ public class IntroductionActivity extends AppCompatActivity {
         runOnUiThread(this::addAnim);
         setMyButton();
     }
-    private void setStatusBar(){
-        Window window = getWindow();
-        Drawable gradientDrawable = ContextCompat.getDrawable(this,R.drawable.gradient_status_bar);
-        window.setStatusBarColor(Color.TRANSPARENT); // Make the status bar transparent
-        window.setBackgroundDrawable(gradientDrawable); // Apply the gradient as the background
-        // Enable immersive mode with sticky immersive flag
 
-    }
 
     private void setMyButton(){
         Button btnLogin = findViewById(R.id.btnLogin);

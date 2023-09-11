@@ -18,5 +18,12 @@ Back!</string>
     <string name="msg_terms_conditi">Terms &amp; Conditions</string>
     <string name="lbl_let_s_start">Let\u2019s Start.</string>
     <string name="lbl_user_name">User Name</string>
-
+    <string name="todo">TODO</string>
+    <string name="home">Home</string>
+    <string name="pet">Pet</string>
+    <string name="settings">Settings</string>
+    <string name="user">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="google_api_key">AIzaSyBN7YNXYuynFhliovqZMYMqeuOXIZ4z9p0</string>
 </resources>

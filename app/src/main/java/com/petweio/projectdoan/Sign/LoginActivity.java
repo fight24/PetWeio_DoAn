@@ -1,26 +1,27 @@
 package com.petweio.projectdoan.Sign;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
+import com.petweio.projectdoan.Menu.BottomNavActivity;
+import com.petweio.projectdoan.MyAppCompatActivity;
 import com.petweio.projectdoan.R;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends MyAppCompatActivity {
 
     private EditText edtUser,edtPass;
     private ImageButton btnClose;
     private FrameLayout frameStackRectangle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +30,15 @@ public class LoginActivity extends AppCompatActivity {
         init();
     }
     private void init(){
-        Window window = getWindow();
-        window.setStatusBarColor(ContextCompat.getColor(this,R.color.pink_50));
 
 
-
+        Button btnLogin =  findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(v ->{
+            Intent intent = new Intent(LoginActivity.this, BottomNavActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+            finish();
+        });
 
         btnClose = findViewById(R.id.btnClose);
 

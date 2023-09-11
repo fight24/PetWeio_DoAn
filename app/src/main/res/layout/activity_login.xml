@@ -35,8 +35,8 @@
 
                     <ImageButton
                         android:id="@+id/btnClose"
-                        android:layout_width="@dimen/_12pxh"
-                        android:layout_height="@dimen/_12pxh"
+                        android:layout_width="@dimen/_20pxh"
+                        android:layout_height="@dimen/_20pxh"
                         android:layout_gravity="end"
                         android:layout_marginStart="@dimen/_31pxh"
                         android:layout_marginTop="@dimen/_30pxv"

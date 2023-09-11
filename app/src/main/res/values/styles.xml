@@ -60,4 +60,21 @@
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textFontWeight" tools:targetApi="p">500</item>
     </style>
+    <style name="RoundedCornerShape_50pt">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item> <!-- Điều này định rõ bán kính cong là 50% để làm cho nó tròn -->
+    </style>
+    <style name="RoundedCornerShape_30pt">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">30%</item> <!-- Điều này định rõ bán kính cong là 50% để làm cho nó tròn -->
+    </style>
+
+        <!-- Base application theme -->
+        <style name="CustomeAppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+            <!-- Enable transparent status bar -->
+            <item name="android:windowTranslucentStatus">true</item>
+            <!-- Set window background to transparent (optional) -->
+            <item name="android:windowBackground">@android:color/transparent</item>
+            <!-- Your other theme attributes -->
+        </style>
 </resources>
