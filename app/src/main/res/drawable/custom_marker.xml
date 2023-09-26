@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow Layer -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#40000000" />
+            <size android:width="22dp" android:height="22dp" />
+            <gradient
+                android:centerColor="#40000000"
+                android:endColor="#00000000"
+                android:startColor="#40000000"
+                android:type="radial"
+                android:gradientRadius="9dp"
+            />
+        </shape>
+    </item>
+
+    <!-- White Circle (Middle Layer) -->
+    <item android:top="4dp" android:left="4dp" android:right="4dp" android:bottom="4dp">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" />
+            <size
+                android:width="@dimen/mapbox_my_locationview_outer_circle"
+                android:height="@dimen/mapbox_my_locationview_outer_circle"
+                tools:ignore="PrivateResource" />
+        </shape>
+    </item>
+
+    <!-- Blue Circle (Inner Layer) -->
+    <item android:top="8dp" android:left="8dp" android:right="8dp" android:bottom="8dp">
+        <vector
+
+            android:width="14dp"
+            android:height="14dp"
+            android:viewportHeight="14.0"
+            android:viewportWidth="14.0">
+            <path
+                android:fillColor="@color/text_pink"
+                android:pathData="M7,7m-7,0a7,7 0,1 1,14 0a7,7 0,1 1,-14 0"/>
+        </vector>
+    </item>
+</layer-list>

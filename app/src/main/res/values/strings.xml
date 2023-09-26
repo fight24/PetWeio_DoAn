@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name_version">P e t W e i o</string>
     <string name="app_name">PetWeio</string>
     <string name="loading">Loading…</string>
     <string name="no_internet_connection">No internet connection!</string>
@@ -9,6 +10,11 @@
     <string name="lbl_login">Sign In</string>
     <string name="lbl_welcome_back">Welcome
 Back!</string>
+    <string name="token_mapbox">sk.eyJ1IjoiZmlnaHQyNDIwMDEiLCJhIjoiY2xtaXJmN3h4MGFvcjNtb3htYXVpaHB5diJ9.3LxklTWU06clW9ptZulGAA</string>
+    <string name="driving_profile">Driving</string>
+    <string name="walking_profile">Walking</string>
+    <string name="cycling_profile">Cycling</string>
+
     <string name="lbl_email_address">Email Address</string>
     <string name="lbl_password">Password</string>
     <string name="msg_forgot_password">Forgot Password?</string>
@@ -25,5 +31,9 @@ Back!</string>
     <string name="user">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="google_api_key">AIzaSyBN7YNXYuynFhliovqZMYMqeuOXIZ4z9p0</string>
+    <string name="google_api_key">AIzaSyCCk2t_Ps8R8axfu66n6lPmbCwdaVI5rMI</string>
+    <string name="google_api_key_2">AIzaSyB8RUcMmNJW3FG1DOydVrw5NV3nO5jmDKs</string>
+    <string name="key_api_hub">c114ab54demsh0b24342ab5f3893p1cad85jsn9303cabb0f26</string>
+    <string name="twitterUsername">\@joeytribbiani</string>
+    <string name="key_mapbox">pk.eyJ1IjoiZmlnaHQyNDIwMDEiLCJhIjoiY2xtaW1rM2NsMGVtdjNlcWtrbWo1em9jaCJ9.YD_M88MHD_oNQA9LR2_Vfw</string>
 </resources>

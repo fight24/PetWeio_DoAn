@@ -4,16 +4,307 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.UserFragment"
-    android:background="@color/bluegray_800">
-
-    <!-- TODO: Update blank fragment layout -->
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:background="@drawable/grad"
+>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/user"
-        android:textColor="#9575CD"
-        android:textSize="50sp" />
+        tools:ignore="UselessParent">
+
+        <RelativeLayout
+            android:id="@+id/rellay1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:paddingBottom="20dp">
+
+            <RelativeLayout
+                android:id="@+id/imgUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/circle_border">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginStart="9dp"
+                    android:layout_marginTop="9dp"
+                    android:layout_marginEnd="9dp"
+                    android:layout_marginBottom="9dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/circle"
+                    android:importantForAccessibility="no"
+                    android:padding="3dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_user"
+                    tools:ignore="ImageContrastCheck" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgUser"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15sp"
+                android:fontFamily="sans-serif-light"
+                android:text="Joey Tribbiani"
+                android:textColor="#040F2A"
+                android:textSize="32sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_name"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="sans-serif"
+                android:text="new york, usa"
+                android:textAllCaps="true"
+                android:textColor="#01579B"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/linlay1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rellay1"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/followersBg"
+                android:gravity="center"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="453K"
+                        android:textColor="#040F2A"
+                        android:textSize="25sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="followers"
+                        android:textAllCaps="true"
+                        android:textColor="#040F2A"
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/followingBg"
+                android:gravity="center"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="873"
+                        android:textColor="#040F2A"
+                        android:textSize="25sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="following"
+                        android:textAllCaps="true"
+                        android:textColor="#040F2A"
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/linlay1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textColor="#3949AB"
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="joey@sharenofood.com"
+                        android:textColor="#000000"
+                        android:textSize="18sp"
+                        tools:ignore="HardcodedText" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/grey" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Phone"
+                        android:textColor="#3949AB"
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="+1-202-555-0157"
+                        android:textColor="#000000"
+                        android:textSize="18sp"
+                        tools:ignore="HardcodedText" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/grey" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Twitter"
+                        android:textColor="#0D47A1"
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/twitterUsername"
+                        android:textColor="#000000"
+                        android:textSize="18sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/grey" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Facebook"
+                        android:textColor="#0D47A1"
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="facebook.com/joeytrib"
+                        android:textColor="#000000"
+                        android:textSize="18sp"
+                        tools:ignore="HardcodedText" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/grey" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </FrameLayout>

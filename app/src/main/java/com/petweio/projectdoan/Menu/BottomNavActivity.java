@@ -15,30 +15,67 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
-import com.petweio.projectdoan.fragments.HomeFragment;
 import com.petweio.projectdoan.MyAppCompatActivity;
-import com.petweio.projectdoan.fragments.PetFragment;
 import com.petweio.projectdoan.R;
+import com.petweio.projectdoan.fragments.HomeFragment;
+import com.petweio.projectdoan.fragments.MapFragment;
 import com.petweio.projectdoan.fragments.SettingFragment;
 import com.petweio.projectdoan.fragments.UserFragment;
+import com.petweio.projectdoan.service.MqttClientManager;
+
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+
+import java.util.Objects;
 
 public class BottomNavActivity extends MyAppCompatActivity {
-    private static final int REQUEST_LOCATION_PERMISSION = 1001;
     private static final String TAG ="[BottomNavActivity]" ;
+    private static final int REQUEST_LOCATION_PERMISSION = 1001;
+
     private int selectTab = 1; // 1 - 4 tab, default is 1
 
+    private static final String BROKER_URL = "tcp://f3aab273.emqx.cloud:1883";// "tcp://namcu.ddns.net:1883"
+    private static final String CLIENT_ID = "your_client_id";
+    MqttAndroidClient mqttAndroidClient;
+    MqttConnectOptions mqttConnectOptions;
+
+    LinearLayout homeLayout ;
+    LinearLayout petsLayout ;
+    LinearLayout userLayout;
+    LinearLayout settingsLayout;
+
+    ImageView homeIMG ;
+    ImageView petIMG ;
+    ImageView userIMG ;
+    ImageView settingsIMG;
+
+    TextView homeText ;
+    TextView petText ;
+    TextView userText ;
+    TextView settingText;
+    static MqttClientManager mqttClientManager = new MqttClientManager();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_bottom_menu);
-        requestPermision();
+        requestPermission();
         init();
 
     }
-    private void requestPermision()
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private void requestPermission()
     {
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -52,39 +89,45 @@ public class BottomNavActivity extends MyAppCompatActivity {
                     REQUEST_LOCATION_PERMISSION);
         }
         else{
-            Log.d(TAG, "permission denied");
+            Log.d(TAG, "permission granted");
         }
 
     }
 
     private void init(){
-        final LinearLayout homeLayout = findViewById(R.id.homeLayout);
-        final LinearLayout petsLayout = findViewById(R.id.petLayout);
-        final LinearLayout userLayout = findViewById(R.id.userLayout);
-        final LinearLayout settingsLayout = findViewById(R.id.settingLayout);
+         homeLayout = findViewById(R.id.homeLayout);
+         petsLayout = findViewById(R.id.petLayout);
+         userLayout = findViewById(R.id.userLayout);
+         settingsLayout = findViewById(R.id.settingLayout);
 
-        final ImageView homeIMG = findViewById(R.id.homeIMG);
-        final ImageView petIMG = findViewById(R.id.petIMG);
-        final ImageView userIMG = findViewById(R.id.userIMG);
-        final ImageView settingsIMG = findViewById(R.id.settingIMG);
+         homeIMG = findViewById(R.id.homeIMG);
+         petIMG = findViewById(R.id.petIMG);
+         userIMG = findViewById(R.id.userIMG);
+         settingsIMG = findViewById(R.id.settingIMG);
 
-        final TextView homeText = findViewById(R.id.homeText);
-        final TextView petText = findViewById(R.id.petText);
-        final TextView userText = findViewById(R.id.userText);
-        final TextView settingText = findViewById(R.id.settingText);
+         homeText = findViewById(R.id.homeText);
+         petText = findViewById(R.id.petText);
+         userText = findViewById(R.id.userText);
+         settingText = findViewById(R.id.settingText);
+         setMqtt();
 
-        // set home default
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.fragmentContainer, HomeFragment.class,null)
-                 .commit();
 
+
+
+
+
+
+    }
+
+    private void homeLayout(HomeFragment homeFragment){
         homeLayout.setOnClickListener(v -> {
             if(selectTab != 1){
+
                 // set home fragment
+
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, HomeFragment.class,null)
+                        .replace(R.id.fragmentContainer, homeFragment,null)
                         .commit();
 
                 petText.setVisibility(View.GONE);
@@ -114,13 +157,16 @@ public class BottomNavActivity extends MyAppCompatActivity {
             }
         });
 
+    }
+    private void petLayout(MapFragment mapFragment){
+
         petsLayout.setOnClickListener(v -> {
             if(selectTab != 2){
-               Fragment petFragment = new PetFragment();
+
                 //set pet fragment
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, petFragment,null)
+                        .replace(R.id.fragmentContainer, mapFragment,null)
                         .commit();
 
                 homeText.setVisibility(View.GONE);
@@ -149,13 +195,14 @@ public class BottomNavActivity extends MyAppCompatActivity {
 
             }
         });
-
+    }
+    private void profileLayout(UserFragment userFragment){
         userLayout.setOnClickListener(v -> {
             if(selectTab != 3){
                 //set user fragment
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, UserFragment.class,null)
+                        .replace(R.id.fragmentContainer, userFragment,null)
                         .commit();
 
                 petText.setVisibility(View.GONE);
@@ -184,13 +231,14 @@ public class BottomNavActivity extends MyAppCompatActivity {
 
             }
         });
-
+    }
+    private void settingsLayout(SettingFragment settingFragment){
         settingsLayout.setOnClickListener(v -> {
             if(selectTab != 4){
                 //set settings fragment
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, SettingFragment.class,null)
+                        .replace(R.id.fragmentContainer, settingFragment,null)
                         .commit();
 
                 petText.setVisibility(View.GONE);
@@ -219,7 +267,72 @@ public class BottomNavActivity extends MyAppCompatActivity {
 
             }
         });
+    }
+    private void setMqtt(){
+        String topic = "wemeio24";
+        mqttAndroidClient = new MqttAndroidClient(this.getApplicationContext(),BROKER_URL,CLIENT_ID);
+        mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setCleanSession(true);
+        mqttConnectOptions.setAutomaticReconnect(true);
+        mqttConnectOptions.setUserName("nam");
+        mqttConnectOptions.setPassword("nam".toCharArray());
+        try {
+            IMqttToken token = mqttAndroidClient.connect(mqttConnectOptions);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "Connected");
+                    mqttSub(mqttAndroidClient,topic);
+                }
 
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.e(TAG, "Failed to connect");
+                }
+            });
+        }catch (MqttException e){
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+        }
+        MqttClientManager.setMqttClient(mqttAndroidClient);
+        HomeFragment homeFragment = HomeFragment.newInstance(mqttClientManager);
+//        PetFragmentMapBox petFragment = PetFragmentMapBox.newInstance(mqttClientManager);
+
+        UserFragment userFragment = new UserFragment();
+        SettingFragment settingFragment = new SettingFragment();
+        MapFragment mapFragment = MapFragment.newInstance(mqttClientManager);
+        // set home default
+//        getSupportFragmentManager().beginTransaction()
+//                .setReorderingAllowed(true)
+//                .replace(R.id.fragmentContainer, homeFragment,null)
+//                .commit();
+        runOnUiThread(() ->{
+            homeLayout(homeFragment);
+            petLayout(mapFragment);
+            profileLayout(userFragment);
+            settingsLayout(settingFragment);
+        });
+
+    }
+    private void mqttSub(MqttAndroidClient client,String topic){
+        int qos = 1;
+        try{
+            IMqttToken subToken = client.subscribe(topic,qos);
+            subToken.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+
+                }
+            });
+
+
+        }catch (MqttException e){
+            Log.e(TAG,"onFailure mqttSub :" + e);
+        }
 
     }
     @Override

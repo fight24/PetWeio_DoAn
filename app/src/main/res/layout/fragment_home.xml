@@ -15,5 +15,13 @@
         android:gravity="center"
         android:textSize="50sp"
         />
+    <TextView
+        android:id="@+id/tv_param"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/home"
+        android:gravity="bottom|center"
+        android:textSize="20sp"
+        />
 
 </FrameLayout>

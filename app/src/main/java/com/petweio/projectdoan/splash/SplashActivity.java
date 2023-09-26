@@ -14,7 +14,7 @@ import com.petweio.projectdoan.R;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends MyAppCompatActivity {
-    private static final int SPLASH_TIME=10000;
+    private static final int SPLASH_TIME=5000;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
