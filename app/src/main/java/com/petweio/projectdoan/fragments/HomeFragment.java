@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.petweio.projectdoan.R;
@@ -17,8 +19,6 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.io.Serializable;
-
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
@@ -26,9 +26,9 @@ public class HomeFragment extends Fragment {
 
     private static final String ARG_PARAM_MQTT = "MQTT";
 
-    private MqttClientManager mqttClient;
+    private MqttClientManager mqttClient = new MqttClientManager();
     private MqttAndroidClient mqttAndroidClient;
-
+    TextView textView;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -36,9 +36,7 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(MqttClientManager client) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-
-        args.putSerializable(ARG_PARAM_MQTT, (Serializable) client);
-
+        args.putSerializable(ARG_PARAM_MQTT, client);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,8 +44,10 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mqttClient =(MqttClientManager) getArguments().getSerializable(ARG_PARAM_MQTT);
+        if (this.getArguments() != null) {
+            mqttClient =(MqttClientManager) this.getArguments().getSerializable(ARG_PARAM_MQTT);
+            assert mqttClient != null;
+            mqttAndroidClient = mqttClient.getMqttClient();
             Log.d(TAG, "OK");
 
         }
@@ -62,32 +62,37 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
     private void init(View rootView){
-      TextView textView = rootView.findViewById(R.id.tv_param);
-      mqttAndroidClient = mqttClient.getMqttClient();
-      mqttAndroidClient.setCallback(new MqttCallback() {
-          @Override
-          public void connectionLost(Throwable cause) {
+      textView = rootView.findViewById(R.id.tv_param);
 
-          }
-
-          @Override
-          public void messageArrived(String topic, MqttMessage message) throws Exception {
-              String messageToString = new String(message.getPayload());
-            String msg = "Topic: " + topic + " Message: " +messageToString;
-                textView.setText(msg);
-
-            Log.e(TAG, msg);
-          }
-
-          @Override
-          public void deliveryComplete(IMqttDeliveryToken token) {
-
-          }
-      });
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        try{
+            mqttAndroidClient.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable cause) {
 
+                }
 
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    String messageToString = new String(message.getPayload());
+                    String msg = "Topic: " + topic + " Message: " +messageToString;
+                    textView.setText(msg);
 
+                    Log.e(TAG, msg);
+                }
 
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+
+                }
+            });
+        }catch (Exception e) {
+            Log.e(TAG,"Exception" + e);
+        }
+
+    }
 }

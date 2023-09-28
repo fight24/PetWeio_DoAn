@@ -12,10 +12,12 @@
         android:id="@+id/fragmentContainer"
         android:name="com.petweio.projectdoan.fragments.HomeFragment"
         tools:layout="@layout/fragment_home" />
+
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/white_A700"
         android:baselineAligned="false"
@@ -24,7 +26,6 @@
         android:orientation="horizontal"
         android:paddingStart="20dp"
         android:paddingTop="15dp"
-        android:layout_alignParentBottom="true"
         android:paddingEnd="20dp"
         android:paddingBottom="15dp"
         android:weightSum="4">

@@ -64,10 +64,6 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item> <!-- Điều này định rõ bán kính cong là 50% để làm cho nó tròn -->
     </style>
-    <style name="RoundedCornerShape_30pt">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">30%</item> <!-- Điều này định rõ bán kính cong là 50% để làm cho nó tròn -->
-    </style>
 
         <!-- Base application theme -->
         <style name="CustomeAppTheme" parent="Theme.Material3.DayNight.NoActionBar">

@@ -5,13 +5,22 @@ import org.eclipse.paho.android.service.MqttAndroidClient;
 import java.io.Serializable;
 
 public class MqttClientManager implements Serializable {
-    private static MqttAndroidClient mqttClient;
+    private MqttAndroidClient mqttClient;
 
-    public static void setMqttClient(MqttAndroidClient client) {
-        mqttClient = client;
+    public MqttClientManager(MqttAndroidClient mqttClient) {
+        this.mqttClient = mqttClient;
     }
 
-    public static MqttAndroidClient getMqttClient() {
+    public MqttClientManager() {
+
+    }
+
+
+    public  void setMqttClient(MqttAndroidClient client) {
+        this.mqttClient = client;
+    }
+
+    public  MqttAndroidClient getMqttClient() {
         return mqttClient;
     }
 }

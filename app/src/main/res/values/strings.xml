@@ -36,4 +36,12 @@ Back!</string>
     <string name="key_api_hub">c114ab54demsh0b24342ab5f3893p1cad85jsn9303cabb0f26</string>
     <string name="twitterUsername">\@joeytribbiani</string>
     <string name="key_mapbox">pk.eyJ1IjoiZmlnaHQyNDIwMDEiLCJhIjoiY2xtaW1rM2NsMGVtdjNlcWtrbWo1em9jaCJ9.YD_M88MHD_oNQA9LR2_Vfw</string>
+    <string name="distance">Distance</string>
+    <string name="_0_km">0 km</string>
+    <string name="find">Find</string>
+    <string name="device_01">Device 01</string>
+    <string name="_100">100 %</string>
+    <string name="type">Type:</string>
+    <string name="dog">DOG</string>
+    <string name="features">Features</string>
 </resources>

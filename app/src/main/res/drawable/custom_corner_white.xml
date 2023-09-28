@@ -1,0 +1,9 @@
+<!-- res/drawable/custom_corner.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:bottomRightRadius="0dp"
+        android:topLeftRadius="@dimen/_40pxv"
+        android:topRightRadius="@dimen/_40pxv"
+        android:bottomLeftRadius="0dp"/>
+    <solid android:color="@color/white" /> <!-- Màu nền của LinearLayout -->
+</shape>

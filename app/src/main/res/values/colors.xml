@@ -14,6 +14,7 @@
     <color name="white_A700">#ffffff</color>
     <color name="trans">#00000000</color> <!-- Màu trong suốt -->
     <color name="gradient_status_bar">#FF000000</color> <!-- Mã màu tùy ý -->
+
     <color name="gray_300">#d7dbe6</color>
     <color name="home_20">#331194AA</color>
     <color name="text_pink">#600251</color>
@@ -37,4 +38,6 @@
     <color name="followersBg">#65DCE5</color>
     <color name="followingBg">#49BEFF</color>
     <color name="grey">#E5E5E5</color>
+    <color name="background_menu">#3E000000</color>
+    <color name="background_menu_item">#E9171616</color>
 </resources>

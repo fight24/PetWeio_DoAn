@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="16dp"
+    android:layout_marginEnd="10dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Adapter.DeviceFeaturesAdapter"
+    >
+    <LinearLayout
+        android:layout_width="@dimen/_136pxh"
+        android:layout_height="@dimen/_89pxh"
+        android:background="@drawable/custom_corner_stroke"
+        android:orientation="vertical"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            >
+            <ImageView
+                android:id="@+id/id_icon_features"
+                android:layout_width="@dimen/_40pxh"
+                android:layout_height="@dimen/_40pxh"
+                android:layout_marginStart="2dp"
+                android:src="@drawable/distance"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/txtTitleFeatures"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="2dp"
+                android:layout_toEndOf="@+id/id_icon"
+                android:fontFamily="@font/seymour_one"
+                android:text="@string/distance"
+                android:layout_centerVertical="true"
+                android:textAlignment="center"
+                android:textSize="12sp"
+                tools:ignore="UnknownId" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/txtValueFeatures"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="@string/_0_km"
+            android:layout_gravity="center"
+            android:fontFamily="@font/vndi01"
+            android:textSize="25sp"
+            />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
