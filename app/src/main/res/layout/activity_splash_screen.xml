@@ -11,7 +11,7 @@
         android:id="@+id/imgSplash"
         android:layout_width="411dp"
         android:layout_height="247dp"
-        android:layout_marginBottom="85dp"
+        android:layout_marginBottom="90dp"
         android:importantForAccessibility="no"
         android:shadowColor="#000000"
         android:shadowDx="1.5"
@@ -25,10 +25,11 @@
         tools:ignore="MissingConstraints,ImageContrastCheck" />
 
     <TextView
+        android:paddingTop="20dp"
         android:id="@+id/tvAppName"
         android:layout_width="match_parent"
         android:layout_height="85dp"
-        android:fontFamily="@font/bangers"
+        android:fontFamily="@font/black_ops_one"
         android:textStyle="bold"
         android:shadowColor="#000000"
         android:shadowDx="1.5"
@@ -37,7 +38,7 @@
         android:text="@string/app_name_version"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:textColor="#78909C"
         app:layout_constraintBottom_toBottomOf="@+id/imgSplash"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,11 +49,10 @@
 
     <TextView
         android:id="@+id/tvAppVersion"
-        android:layout_width="106dp"
-        android:layout_height="31dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:fontFamily="@font/bangers"
-
+        android:fontFamily="@font/black_ops_one"
         android:text="@string/msg_app_version_1_0"
         android:textAlignment="center"
         android:textColor="#78909C"

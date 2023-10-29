@@ -1,27 +1,37 @@
 package com.petweio.projectdoan.Menu;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentContainerView;
 
+import com.github.ybq.android.spinkit.style.WanderingCubes;
+import com.petweio.projectdoan.Model.Device;
 import com.petweio.projectdoan.MyAppCompatActivity;
 import com.petweio.projectdoan.R;
+import com.petweio.projectdoan.fragments.AboutFragment;
 import com.petweio.projectdoan.fragments.HomeFragment;
 import com.petweio.projectdoan.fragments.MapFragment;
+import com.petweio.projectdoan.fragments.NotFFoundFragment;
 import com.petweio.projectdoan.fragments.SettingFragment;
-import com.petweio.projectdoan.fragments.UserFragment;
 import com.petweio.projectdoan.service.MqttClientManager;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -30,50 +40,75 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BottomNavActivity extends MyAppCompatActivity {
     private static final String TAG ="[BottomNavActivity]" ;
-    private static final int REQUEST_LOCATION_PERMISSION = 1001;
+    public static final int REQUEST_LOCATION_PERMISSION = 1001;
 
     private int selectTab = 1; // 1 - 4 tab, default is 1
 
-    private static final String BROKER_URL = "tcp://f3aab273.emqx.cloud:1883";// "tcp://namcu.ddns.net:1883"
+    private static final String BROKER_URL = "tcp://0.tcp.ap.ngrok.io:14468";// "tcp://namcu.ddns.net:1883"
     private static final String CLIENT_ID = "your_client_id";
     MqttAndroidClient mqttAndroidClient;
     MqttConnectOptions mqttConnectOptions;
 
-    LinearLayout homeLayout ;
-    LinearLayout petsLayout ;
-    LinearLayout userLayout;
-    LinearLayout settingsLayout;
+    LinearLayout homeLayout ,petsLayout,settingsLayout,aboutLayout,bottomMenuBar;
 
-    ImageView homeIMG ;
-    ImageView petIMG ;
-    ImageView userIMG ;
-    ImageView settingsIMG;
-
-    TextView homeText ;
-    TextView petText ;
-    TextView userText ;
-    TextView settingText;
+    ImageView homeIMG , petIMG,settingsIMG,aboutIMG;
+    TextView homeText ,petText ,settingText,aBoutText;
+    FragmentContainerView fragmentContainerView ;
+    FrameLayout loading ;
+    ProgressBar progressBarCustom;
+    List<Device> devices = new ArrayList<>();
     static MqttClientManager mqttClientManager ;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_bottom_menu);
         requestPermission();
         init();
 
     }
-
-
     @Override
     protected void onResume() {
         super.onResume();
-
+        Log.d(TAG, "onResume");
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG,"onStart");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG,"onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG,"onStop");
+    }
+
+
 
     private void requestPermission()
     {
@@ -95,30 +130,59 @@ public class BottomNavActivity extends MyAppCompatActivity {
     }
 
     private void init(){
-         homeLayout = findViewById(R.id.homeLayout);
+
+
+        homeLayout = findViewById(R.id.homeLayout);
          petsLayout = findViewById(R.id.petLayout);
-         userLayout = findViewById(R.id.userLayout);
+         aboutLayout = findViewById(R.id.aboutLayout);
          settingsLayout = findViewById(R.id.settingLayout);
+         fragmentContainerView = findViewById(R.id.fragmentContainer);
+         bottomMenuBar = findViewById(R.id.bottomBar);
+         loading = findViewById(R.id.loadingBottom);
+         progressBarCustom = findViewById(R.id.progressBarCustom);
 
          homeIMG = findViewById(R.id.homeIMG);
          petIMG = findViewById(R.id.petIMG);
-         userIMG = findViewById(R.id.userIMG);
+         aboutIMG = findViewById(R.id.aboutIMG);
          settingsIMG = findViewById(R.id.settingIMG);
 
          homeText = findViewById(R.id.homeText);
          petText = findViewById(R.id.petText);
-         userText = findViewById(R.id.userText);
          settingText = findViewById(R.id.settingText);
-         setMqtt();
+         aBoutText = findViewById(R.id.aboutText);
+         aboutIMG = findViewById(R.id.aboutIMG);
+        progressBarCustom.setIndeterminateDrawable(new WanderingCubes());
 
-
-
-
-
-
-
+        setMqtt();
+         new Handler().postDelayed(() ->{
+             loading.setVisibility(View.GONE);
+            fragmentContainerView.setVisibility(View.VISIBLE);
+            bottomMenuBar.setVisibility(View.VISIBLE);
+         },5000);
     }
 
+    private void checkDevice(String name, MapFragment mapFragment,NotFFoundFragment notFFoundFragment) {
+        Call<List<Device>> call = apiService.showDevicesFromUser(name);
+        call.enqueue(new Callback<List<Device>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Device>> call, @NonNull Response<List<Device>> response) {
+                if(response.isSuccessful()){
+                    devices = response.body();
+                    Log.d(TAG,"Ok show : "+ devices);
+                    petLayout(mapFragment,notFFoundFragment,devices);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Device>> call, @NonNull Throwable t) {
+                Log.d(TAG, "show Devices : onFailure: ");
+            }
+        });
+        Log.d(TAG,"List[0]"+ devices.toString());
+
+    }
     private void homeLayout(HomeFragment homeFragment){
         homeLayout.setOnClickListener(v -> {
             if(selectTab != 1){
@@ -131,15 +195,15 @@ public class BottomNavActivity extends MyAppCompatActivity {
                         .commit();
 
                 petText.setVisibility(View.GONE);
-                userText.setVisibility(View.GONE);
+                aBoutText.setVisibility(View.GONE);
                 settingText.setVisibility(View.GONE);
 
                 petIMG.setImageResource(R.drawable.ic_tracking);
-                userIMG.setImageResource(R.drawable.ic_avatar);
+                aboutIMG.setImageResource(R.drawable.ic_list);
                 settingsIMG.setImageResource(R.drawable.ic_settings);
 
                 petsLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
-                userLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
+                aboutLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 settingsLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 // select home tab
                 homeText.setVisibility(View.VISIBLE);
@@ -148,7 +212,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
 
                 // create animation
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f,1.0f,1f,1f, Animation.RELATIVE_TO_SELF,0.0f,Animation.RELATIVE_TO_SELF,0.0f);
-                scaleAnimation.setDuration(200);
+                scaleAnimation.setDuration(500);
                 scaleAnimation.setFillAfter(true);
                 homeLayout.startAnimation(scaleAnimation);
                 // set selected
@@ -158,27 +222,31 @@ public class BottomNavActivity extends MyAppCompatActivity {
         });
 
     }
-    private void petLayout(MapFragment mapFragment){
-
+    private void petLayout(MapFragment mapFragment, NotFFoundFragment notFFoundFragment, List<Device> deviceList){
         petsLayout.setOnClickListener(v -> {
             if(selectTab != 2){
+                if(deviceList.isEmpty()){
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.fragmentContainer, notFFoundFragment,null)
+                            .commit();
+                }else{
 
-                //set pet fragment
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, mapFragment,null)
-                        .commit();
-
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.fragmentContainer, mapFragment,null)
+                            .commit();
+                }
                 homeText.setVisibility(View.GONE);
-                userText.setVisibility(View.GONE);
                 settingText.setVisibility(View.GONE);
+                aBoutText.setVisibility(View.GONE);
 
                 homeIMG.setImageResource(R.drawable.ic_home);
-                userIMG.setImageResource(R.drawable.ic_avatar);
                 settingsIMG.setImageResource(R.drawable.ic_settings);
+                aboutIMG.setImageResource(R.drawable.ic_list);
 
+                aboutLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 homeLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
-                userLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 settingsLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 // select home tab
                 petText.setVisibility(View.VISIBLE);
@@ -187,22 +255,23 @@ public class BottomNavActivity extends MyAppCompatActivity {
 
                 // create animation
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f,1.0f,1f,1f, Animation.RELATIVE_TO_SELF,1.0f,Animation.RELATIVE_TO_SELF,0.0f);
-                scaleAnimation.setDuration(200);
+                scaleAnimation.setDuration(500);
                 scaleAnimation.setFillAfter(true);
                 petsLayout.startAnimation(scaleAnimation);
                 // set selected
+                //set pet fragment
                 selectTab = 2;
 
             }
         });
     }
-    private void profileLayout(UserFragment userFragment){
-        userLayout.setOnClickListener(v -> {
+    private void aboutLayout(AboutFragment aboutFragment){
+        aboutLayout.setOnClickListener(v -> {
             if(selectTab != 3){
-                //set user fragment
+                //set settings fragment
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, userFragment,null)
+                        .replace(R.id.fragmentContainer, aboutFragment,null)
                         .commit();
 
                 petText.setVisibility(View.GONE);
@@ -210,22 +279,22 @@ public class BottomNavActivity extends MyAppCompatActivity {
                 settingText.setVisibility(View.GONE);
 
                 petIMG.setImageResource(R.drawable.ic_tracking);
-                homeIMG.setImageResource(R.drawable.ic_home);
                 settingsIMG.setImageResource(R.drawable.ic_settings);
+                homeIMG.setImageResource(R.drawable.ic_home);
 
                 petsLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
-                homeLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 settingsLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
+                homeLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 // select home tab
-                userText.setVisibility(View.VISIBLE);
-                userIMG.setImageResource(R.drawable.ic_avatar_selected);
-                userLayout.setBackgroundResource(R.drawable.round_back_todo);
+                aBoutText.setVisibility(View.VISIBLE);
+                aboutIMG.setImageResource(R.drawable.ic_list_selected);
+                aboutLayout.setBackgroundResource(R.drawable.round_back_todo);
 
                 // create animation
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f,1.0f,1f,1f, Animation.RELATIVE_TO_SELF,1.0f,Animation.RELATIVE_TO_SELF,0.0f);
-                scaleAnimation.setDuration(200);
+                scaleAnimation.setDuration(500);
                 scaleAnimation.setFillAfter(true);
-                userLayout.startAnimation(scaleAnimation);
+                aboutLayout.startAnimation(scaleAnimation);
                 // set selected
                 selectTab = 3;
 
@@ -242,15 +311,15 @@ public class BottomNavActivity extends MyAppCompatActivity {
                         .commit();
 
                 petText.setVisibility(View.GONE);
-                userText.setVisibility(View.GONE);
                 homeText.setVisibility(View.GONE);
+                aBoutText.setVisibility(View.GONE);
 
                 petIMG.setImageResource(R.drawable.ic_tracking);
-                userIMG.setImageResource(R.drawable.ic_avatar);
+                aboutIMG.setImageResource(R.drawable.ic_list);
                 homeIMG.setImageResource(R.drawable.ic_home);
 
                 petsLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
-                userLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
+                aboutLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 homeLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.trans));
                 // select home tab
                 settingText.setVisibility(View.VISIBLE);
@@ -259,7 +328,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
 
                 // create animation
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f,1.0f,1f,1f, Animation.RELATIVE_TO_SELF,1.0f,Animation.RELATIVE_TO_SELF,0.0f);
-                scaleAnimation.setDuration(200);
+                scaleAnimation.setDuration(500);
                 scaleAnimation.setFillAfter(true);
                 settingsLayout.startAnimation(scaleAnimation);
                 // set selected
@@ -274,64 +343,51 @@ public class BottomNavActivity extends MyAppCompatActivity {
         mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setCleanSession(true);
         mqttConnectOptions.setAutomaticReconnect(true);
-        mqttConnectOptions.setUserName("nam");
-        mqttConnectOptions.setPassword("nam".toCharArray());
         try {
             IMqttToken token = mqttAndroidClient.connect(mqttConnectOptions);
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "Connected");
-                    mqttSub(mqttAndroidClient,new String[]{"device01,device02,device03"},new int[]{1,1,1});
+//                    mqttSub(mqttAndroidClient,new String[]{"device01,device02,device03"},new int[]{1,1,1});
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.e(TAG, "Failed to connect");
+
                 }
             });
+
         }catch (MqttException e){
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
         mqttClientManager = new MqttClientManager(mqttAndroidClient);
-        HomeFragment homeFragment = HomeFragment.newInstance(mqttClientManager);
-//        PetFragmentMapBox petFragment = PetFragmentMapBox.newInstance(mqttClientManager);
+        Log.e(TAG, "Android client: " + mqttClientManager);
 
-        UserFragment userFragment = new UserFragment();
+        Intent intent = getIntent();
+        Log.d(TAG, "Intent: "+intent.getStringExtra("username"));
+
+        String userName = intent.getStringExtra("username");
+
         SettingFragment settingFragment = new SettingFragment();
-        MapFragment mapFragment = MapFragment.newInstance(mqttClientManager);
+//        MapFragment mapFragment = MapFragment.newInstance(mqttClientManager);
+        HomeFragment homeFragment = HomeFragment.newInstance(userName);
+        MapFragment mapFragment = MapFragment.newInstance(userName,mqttClientManager);
+        AboutFragment aboutFragment = new AboutFragment();
+        NotFFoundFragment notFFoundFragment = new NotFFoundFragment();
         // set home default
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.fragmentContainer, homeFragment,null)
                 .commit();
         runOnUiThread(() ->{
+            checkDevice(userName,mapFragment,notFFoundFragment);
             homeLayout(homeFragment);
-            petLayout(mapFragment);
-            profileLayout(userFragment);
+//            petLayout(mapFragment,notFFoundFragment,devices);
             settingsLayout(settingFragment);
+            aboutLayout(aboutFragment);
         });
-
-    }
-    private void mqttSub(MqttAndroidClient client,String[] topic,int[] qos){
-        try{
-            IMqttToken subToken = client.subscribe(topic,qos);
-            subToken.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-
-                }
-            });
-
-
-        }catch (MqttException e){
-            Log.e(TAG,"onFailure mqttSub :" + e);
-        }
 
     }
     @Override
@@ -350,5 +406,19 @@ public class BottomNavActivity extends MyAppCompatActivity {
             }
         }
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    Toast.makeText(this, "GPS is turned on", Toast.LENGTH_SHORT).show();
+
+                case Activity.RESULT_CANCELED:
+                    Toast.makeText(this, "GPS required to be turned on", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }

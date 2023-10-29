@@ -1,7 +1,7 @@
 package com.petweio.projectdoan.Adapter;
 
-import com.petweio.projectdoan.Model.DeviceMenu;
+import com.petweio.projectdoan.Model.Device;
 
 public interface RecyclerViewClickListener {
-    void onItemClick(DeviceMenu deviceMenu);
+    void onItemClick(Device deviceMenu);
 }

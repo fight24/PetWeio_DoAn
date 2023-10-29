@@ -25,8 +25,8 @@
 
             <View
                 android:id="@+id/viewBackground"
-                android:layout_width="@dimen/_375pxh"
-                android:layout_height="@dimen/_767pxh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:background="@drawable/gradient_status_bar"
                 tools:ignore="VisualLintBounds" />
@@ -119,53 +119,38 @@
 
                 <TextView
                     android:id="@+id/txtVersion"
-                    style="@style/txtMontserratmedium10"
-                    android:layout_width="wrap_content"
+                    android:fontFamily="@font/black_ops_one"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="@dimen/_81pxh"
                     android:layout_marginTop="@dimen/_29pxv"
-                    android:layout_marginEnd="@dimen/_81pxh"
+                    android:textAlignment="center"
                     android:ellipsize="end"
                     android:lineSpacingExtra="@dimen/_3pxh"
                     android:singleLine="true"
                     android:text="@string/msg_app_version_1_0"
-                    android:textColor="@color/trans"
+                    android:textColor="#616161"
                     tools:ignore="TextSizeCheck"
                     tools:text="@string/msg_app_version_1_0" />
             </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/frameGraphicPart"
-                android:layout_width="@dimen/_373pxh"
-                android:layout_height="@dimen/_345pxv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="top|center"
-                android:layout_marginStart="@dimen/_2pxh"
-                android:layout_marginTop="@dimen/_40pxv"
-                android:layout_marginBottom="@dimen/_40pxv"
+
                 tools:ignore="VisualLintBounds">
 
                 <ImageView
                     android:id="@+id/imageRectangleSeventeen"
-                    android:layout_width="@dimen/_120pxh"
-                    android:layout_height="@dimen/_304pxh"
-                    android:layout_gravity="end"
-                    android:layout_marginStart="@dimen/_10pxh"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/img_rectangle17"
-                    tools:ignore="ContentDescription,VisualLintBounds"
-                    tools:src="@drawable/img_rectangle17" />
-
-                <ImageView
-                    android:id="@+id/imageMyLocationOne"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_330pxv"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginTop="@dimen/_10pxv"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/img_mylocation1"
-                    tools:ignore="ContentDescription,ImageContrastCheck"
-                    tools:src="@drawable/img_mylocation1" />
+                    android:layout_height="match_parent"
+                    android:src="@drawable/undraw_welcome_cats_thqn_origin"
+                    tools:ignore="ContentDescription,VisualLintBounds"
+                    tools:src="@drawable/undraw_welcome_cats_thqn_origin" />
+
             </FrameLayout>
         </FrameLayout>
     </FrameLayout>

@@ -18,10 +18,12 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/images"
+            android:layout_centerVertical="true"
             android:elevation="4dp"
             app:civ_border_width="1dp"
             app:civ_border_color="#FFFFFF"
             />
+
         <TextView
             android:id="@+id/txtTitleDevice"
             android:layout_width="wrap_content"
@@ -32,8 +34,37 @@
             android:layout_toEndOf="@+id/icDeviceMenu"
             android:fontFamily="@font/seymour_one"
             android:text="@string/device_01"
+            android:textColor="#04315E"
             android:textSize="10sp"
-            android:textColor="@color/white"
-            tools:ignore="SmallSp" />
+            tools:ignore="RelativeOverlap,SmallSp" />
+        <LinearLayout
+            android:padding="3dp"
+            android:layout_toEndOf="@id/txtTitleDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <at.markushi.ui.CircleButton
+                android:id="@+id/btnFindDevice"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/baseline_gps_not_fixed_24"
+                app:cb_color="@color/trans"
+                app:cb_pressedRingWidth="3dip"
+                tools:ignore="HardcodedText,SmallSp,TextSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            <at.markushi.ui.CircleButton
+                android:id="@+id/btnInfoDevice"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="3dp"
+                android:src="@drawable/baseline_info_24"
+                app:cb_color="@color/trans"
+                app:cb_pressedRingWidth="3dip"
+                tools:ignore="HardcodedText,SmallSp,TextSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+        </LinearLayout>
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

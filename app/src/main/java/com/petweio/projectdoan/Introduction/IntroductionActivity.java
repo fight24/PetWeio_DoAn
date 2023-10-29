@@ -24,11 +24,33 @@ public class IntroductionActivity extends MyAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_introduction);
         init();
+
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void init(){
-        runOnUiThread(this::addAnim);
+
         setMyButton();
+        new Thread(this::addAnim).start();
     }
 
 

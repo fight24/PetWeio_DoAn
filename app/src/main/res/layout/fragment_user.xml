@@ -1,310 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.UserFragment"
-    android:background="@drawable/grad"
->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="UselessParent">
-
-        <RelativeLayout
-            android:id="@+id/rellay1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:paddingBottom="20dp">
-
-            <RelativeLayout
-                android:id="@+id/imgUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/circle_border">
-
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginStart="9dp"
-                    android:layout_marginTop="9dp"
-                    android:layout_marginEnd="9dp"
-                    android:layout_marginBottom="9dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/circle"
-                    android:importantForAccessibility="no"
-                    android:padding="3dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_user"
-                    tools:ignore="ImageContrastCheck" />
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/tv_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/imgUser"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="15sp"
-                android:fontFamily="sans-serif-light"
-                android:text="Joey Tribbiani"
-                android:textColor="#040F2A"
-                android:textSize="32sp"
-                tools:ignore="HardcodedText" />
-
-
-            <TextView
-                android:id="@+id/tv_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_name"
-                android:layout_centerHorizontal="true"
-                android:fontFamily="sans-serif"
-                android:text="new york, usa"
-                android:textAllCaps="true"
-                android:textColor="#01579B"
-                android:textSize="14sp"
-                tools:ignore="HardcodedText" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/linlay1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/rellay1"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@color/followersBg"
-                android:gravity="center"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    tools:ignore="UselessParent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="453K"
-                        android:textColor="#040F2A"
-                        android:textSize="25sp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="followers"
-                        android:textAllCaps="true"
-                        android:textColor="#040F2A"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@color/followingBg"
-                android:gravity="center"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    tools:ignore="UselessParent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="873"
-                        android:textColor="#040F2A"
-                        android:textSize="25sp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="following"
-                        android:textAllCaps="true"
-                        android:textColor="#040F2A"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
+    android:background="#ffff"
+    android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/linlay1">
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent">
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:background="@drawable/half_circle"
+                />
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/imagelayout"
+                android:paddingTop="3dp"
+                android:layout_marginTop="2dp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/Iconimage2"
+                    android:layout_width="105dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="105dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginTop="55dp"
+                    android:layout_marginStart="40dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/image_not_found"
+                    app:civ_border_width="5dp"
+                    app:civ_border_color="@color/white"
+                    tools:ignore="RedundantNamespace" />
+
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/Iconimage2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="45dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/black_ops_one"
+                    android:text="Device 01- Dog"
+                    android:textColor="#ffff"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText,TextContrastCheck" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/circleLayouts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/imagelayout"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical"
-                tools:ignore="UselessParent">
+                android:layout_marginTop="-20dp">
 
-                <LinearLayout
+                <at.markushi.ui.CircleButton
+                    android:id="@+id/BoostButton"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="5dp"
+                    android:src="@drawable/ic_history"
+                    android:tint="@color/colorPrimary"
+                    app:cb_color="#efefef"
+                    app:cb_pressedRingWidth="3dip"
+                    tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+
+
+                <RelativeLayout
+                    android:id="@+id/editprofile_button_rlayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="65dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/BoostButton"
+                    android:clickable="true"
+                    android:gravity="center"
+                    tools:ignore="DuplicateClickableBoundsCheck">
+
+                    <at.markushi.ui.CircleButton
+                        android:id="@+id/EditButton"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:elevation="5dp"
+                        android:src="@drawable/baseline_mode_edit_24"
+                        android:tint="@color/colorPrimary"
+                        app:cb_color="#efefef"
+                        app:cb_pressedRingWidth="3dip"
+                        tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/settings_button_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="65dp"
+                    android:clickable="true"
+                    android:gravity="center"
+                    tools:ignore="DuplicateClickableBoundsCheck">
+
+                    <at.markushi.ui.CircleButton
+                        android:id="@+id/SettingsButton"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:elevation="5dp"
+                        android:src="@drawable/notifications"
+                        android:tint="@color/colorPrimary"
+                        app:cb_color="#efefef"
+                        app:cb_pressedRingWidth="3dip"
+                        tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="invisible"
+                android:id="@+id/containerInfoNotify"
+                android:background="@drawable/custom_corner_gra"
+                android:layout_below="@+id/view"
+                android:layout_marginTop="-80dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                >
+
+            </RelativeLayout>
+            <RelativeLayout
+
+                android:visibility="invisible"
+                android:id="@+id/containerInfoHistory"
+                android:background="@drawable/custom_corner_gra"
+                android:layout_below="@+id/view"
+                android:layout_marginTop="-80dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/containerInfoEdit"
+                android:background="@drawable/custom_corner_gra"
+                android:layout_below="@+id/view"
+                android:layout_marginTop="-80dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+            <RelativeLayout
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:id="@+id/txtNameDeviceHome2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/black_ops_one"
+                    android:text="Name Device:"
+                    android:textColor="#F9FBE7"
+                    tools:ignore="HardcodedText,TextContrastCheck" />
+
+                <EditText
+                    android:id="@+id/edtNameDeviceHome2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Email"
-                        android:textColor="#3949AB"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="joey@sharenofood.com"
-                        android:textColor="#000000"
-                        android:textSize="18sp"
-                        tools:ignore="HardcodedText" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="15dp"
-                        android:background="@color/grey" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Phone"
-                        android:textColor="#3949AB"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="+1-202-555-0157"
-                        android:textColor="#000000"
-                        android:textSize="18sp"
-                        tools:ignore="HardcodedText" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="15dp"
-                        android:background="@color/grey" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Twitter"
-                        android:textColor="#0D47A1"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="@string/twitterUsername"
-                        android:textColor="#000000"
-                        android:textSize="18sp" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="15dp"
-                        android:background="@color/grey" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Facebook"
-                        android:textColor="#0D47A1"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="facebook.com/joeytrib"
-                        android:textColor="#000000"
-                        android:textSize="18sp"
-                        tools:ignore="HardcodedText" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="15dp"
-                        android:background="@color/grey" />
-
-                </LinearLayout>
-
-
-            </LinearLayout>
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/txtNameDeviceHome2"
+                    android:minHeight="48dp"
+                    tools:ignore="LabelFor,SpeakableTextPresentCheck,TextFields,VisualLintTextFieldSize"
+                    android:importantForAutofill="no" />
+            </RelativeLayout>
+            </RelativeLayout>
 
         </RelativeLayout>
 
-    </RelativeLayout>
-
-</FrameLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,18 +1,24 @@
 package com.petweio.projectdoan.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class User {
-    private int idUser;
+    @SerializedName("id")
+    private long idUser;
+    @SerializedName("email")
     private String email;
+    @SerializedName("username")
     private String userName;
+    @SerializedName("password")
     private String password;
+    @SerializedName("devices")
     private List<Device> devices;
 
     public User() {
     }
-
-    public User(int idUser, String email, String userName, String password, List<Device> devices) {
+    public User(long idUser, String email, String userName, String password, List<Device> devices) {
         this.idUser = idUser;
         this.email = email;
         this.userName = userName;
@@ -20,11 +26,22 @@ public class User {
         this.devices = devices;
     }
 
-    public int getIdUser() {
+    public User(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public User(String email, String userName, String password) {
+        this.email = email;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public long getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(int idUser) {
+    public void setIdUser(long idUser) {
         this.idUser = idUser;
     }
 

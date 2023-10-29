@@ -23,31 +23,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <RelativeLayout
+                <FrameLayout
                     android:id="@+id/imgUser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="5dp"
                     android:layout_gravity="center"
                     android:background="@drawable/circle_border"
                     tools:ignore="ObsoleteLayoutParam">
-
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        android:elevation="2dp"
+                        app:civ_border_width="1dp"
+                        app:civ_border_color="#752E2E"
+                        android:importantForAccessibility="no"
+                        android:src="@color/gray_300"
+                        tools:ignore="ImageContrastCheck,NotSibling" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/backgroundImgUser"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
-                        android:layout_marginStart="9dp"
-                        android:layout_marginTop="9dp"
-                        android:layout_marginEnd="9dp"
-                        android:layout_marginBottom="9dp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="centerInside"
-                        android:background="@drawable/circle"
-                        android:padding="3dp"
+                        android:layout_gravity="center"
+                        android:elevation="2dp"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/image_not_found_1150x647"
+                        app:civ_border_color="#FFFFFF"
+                        app:civ_border_width="3dp"
                         tools:ignore="ImageContrastCheck" />
-                </RelativeLayout>
+
+                </FrameLayout>
 
 
                 <TextView

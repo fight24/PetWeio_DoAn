@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "325363032770",
+    "project_id": "apppetweio",
+    "storage_bucket": "apppetweio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:325363032770:android:0fa97c601db0d97546d15b",
+        "android_client_info": {
+          "package_name": "com.petweio.projectdoan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXI_hJeB5RyP3AmIQx4r4HtrDKkykLCKA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

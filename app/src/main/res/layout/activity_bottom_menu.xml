@@ -3,9 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Menu.BottomNavActivity"
- >
+    android:background="@color/bluegray_800"
+    tools:context=".Menu.BottomNavActivity">
+
+
     <androidx.fragment.app.FragmentContainerView
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomBar"
@@ -14,12 +17,13 @@
         tools:layout="@layout/fragment_home" />
 
     <LinearLayout
+        android:visibility="invisible"
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:background="@color/white_A700"
+        android:background="@color/white"
         android:baselineAligned="false"
         android:elevation="10dp"
         android:gravity="center"
@@ -93,7 +97,7 @@
 
         <LinearLayout
 
-            android:id="@+id/userLayout"
+            android:id="@+id/aboutLayout"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_weight="1"
@@ -104,22 +108,23 @@
             android:paddingEnd="5dp">
 
             <ImageView
-                android:id="@+id/userIMG"
+                android:id="@+id/aboutIMG"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_avatar" />
+                android:src="@drawable/ic_list" />
 
             <TextView
-                android:id="@+id/userText"
+                android:id="@+id/aboutText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="@string/user"
+                android:text="About"
                 android:textColor="#00695C"
                 android:textSize="16sp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
         <LinearLayout
@@ -152,4 +157,21 @@
                 android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/loadingBottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <ProgressBar
+            android:id="@+id/progressBarCustom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/SpinKitView.Large.WanderingCubes"
+            android:indeterminateTint="@color/white"
+            />
+
+
+    </FrameLayout>
 </RelativeLayout>

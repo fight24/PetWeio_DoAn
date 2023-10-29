@@ -7,8 +7,12 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,6 +29,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,10 +39,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.ybq.android.spinkit.style.FoldingCube;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
@@ -54,6 +61,7 @@ import com.mapbox.geojson.Point;
 import com.mapbox.geojson.utils.PolylineUtils;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -75,9 +83,12 @@ import com.mapbox.turf.TurfConstants;
 import com.mapbox.turf.TurfMeasurement;
 import com.petweio.projectdoan.Adapter.DeviceFeaturesAdapter;
 import com.petweio.projectdoan.Adapter.DeviceMenuAdapter;
+import com.petweio.projectdoan.Model.Device;
 import com.petweio.projectdoan.Model.DeviceFeatures;
-import com.petweio.projectdoan.Model.DeviceMenu;
+import com.petweio.projectdoan.Model.LastProperty;
 import com.petweio.projectdoan.R;
+import com.petweio.projectdoan.api.ApiManager;
+import com.petweio.projectdoan.service.ApiService;
 import com.petweio.projectdoan.service.MqttClientManager;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -88,7 +99,10 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -101,9 +115,10 @@ import retrofit2.Response;
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements PermissionsListener, OnMapReadyCallback,MqttCallback {
+public class MapFragment extends Fragment implements PermissionsListener, OnMapReadyCallback {
     private static final String TAG = "MapFragment";
     private static final String ARG_PARAM_MQTT = "MQTT";
+
     private static final String ICON_DESTINATION_DEVICE_V1_ID = "destinationDefault-deviceV1-icon-Id";
     private static final String ICON_DESTINATION_Update_DEVICE_V1_ID = "destinationUpdate-deviceV1-icon-Id";
     private static final String ROUTE_LAYER_ID = "route-layer-id";
@@ -114,41 +129,46 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
     private static final int SLIDE_UP = 2;
     private static final int SLIDE_LEFT_OUT = 3;
     private static final int SLIDE_LEFT_IN = 4;
-    private MqttClientManager mqttClient = new MqttClientManager() ;
+    private static final String ARG_PARAM_USER_NAME = "username";
     private MqttAndroidClient mqttAndroidClient;
     private MapView mapView;
     private MapboxMap mapboxMap;
-    private RecyclerView rvFeatures,listDevice;
+    private RecyclerView rvFeatures, listDevice;
     private DeviceFeaturesAdapter deviceFeaturesAdapter;
     private DeviceMenuAdapter deviceMenuAdapter;
     PermissionsManager permissionsManager;
     LocationComponent locationComponent;
     private ConstraintLayout containerMap;
     private LinearLayout loading;
-    private TextView txtTitleDevice,txtValueType;
+    private TextView txtTitleDevice, txtValueType;
     private Point origin;
-    private Point destinationDefault = Point.fromLngLat(106.64809818797131,20.993439557407193);
-    private Point destinationOrigin = Point.fromLngLat( 105.79080889159361,21.028445539124206);
+    private Point destinationDefault = Point.fromLngLat(0, 0);
+    private Point destinationOrigin = Point.fromLngLat(0, 0);
     private SymbolManager symbolManager;
-    private SymbolOptions symbolOptions;
-    private Symbol symbol,symbolDefault;
-    private MapboxDirections client;
+    private Symbol symbol, symbolDefault;
     private DirectionsRoute walkingRoute;
+
     FloatingActionButton fat;
     List<Symbol> symbolsToDelete = new ArrayList<>();
-    LinearLayoutManager linearLayoutHorizontalManager,linearLayoutVerticalManager;
-    ImageButton imgBtnClose,btnMenu;
+    LinearLayoutManager linearLayoutHorizontalManager, linearLayoutVerticalManager;
+    ImageButton imgBtnClose, btnMenu;
     AppCompatButton btnFind;
     FrameLayout containerFeatures;
     View clickInterceptor;
     Animation animation;
     Animation.AnimationListener animationListener;
     CircleImageView deviceImage;
-    boolean checkMenu = false;
-    final String[] topics = new String[]{"device01", "device02", "device03"};
-    final int[] qos = new int[]{1, 1, 1};
-    double distance = 0d;
+    ProgressBar loadingProgressBar;
+    String[] topics;
+    int[] qos;
+    double distance = 0d, journey = 0d;
+    Device deviceCheck;
+    ApiService apiService;
+    String userName;
+    Map<String, Point> deviceLocationUpdate = new HashMap<>();
 
+    Map<String, List<DeviceFeatures>> deviceFeaturesMap = new HashMap<>();
+    LastProperty lastProperty;
 
     private final MapboxMap.OnMoveListener onMoveListener = new MapboxMap.OnMoveListener() {
         @Override
@@ -166,17 +186,19 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
         }
     };
+
     public MapFragment() {
         // Required empty public constructor
     }
 
 
     // TODO: Rename and change types and number of parameters
-    public static MapFragment newInstance(MqttClientManager client) {
+    @NonNull
+    public static MapFragment newInstance(String name, MqttClientManager client) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM_MQTT, client);
-        fragment.setArguments(args);
+        args.putString(ARG_PARAM_USER_NAME, name);
         fragment.setArguments(args);
         return fragment;
     }
@@ -185,24 +207,20 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(requireActivity(), getString(R.string.key_mapbox));
-        if (this.getArguments() != null) {
-            mqttClient = (MqttClientManager) this.getArguments().getSerializable(ARG_PARAM_MQTT);
-            assert mqttClient != null;
-            mqttAndroidClient = mqttClient.getMqttClient();
-            Log.d(TAG, "OK");
-        }
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        initView(rootView,savedInstanceState);
+        apiService = ApiManager.getInstance().getMyApiService();
+        initView(rootView, savedInstanceState);
         return rootView;
     }
 
-    private void initView(View rootView,Bundle savedInstanceState) {
+    private void initView(@NonNull View rootView, Bundle savedInstanceState) {
 
         mapView = rootView.findViewById(R.id.mapView);
         fat = rootView.findViewById(R.id.fat);
@@ -219,8 +237,8 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
         deviceFeaturesAdapter = new DeviceFeaturesAdapter();
 
-        linearLayoutHorizontalManager = new LinearLayoutManager(requireContext(),RecyclerView.HORIZONTAL,false);
-        linearLayoutVerticalManager = new LinearLayoutManager(requireContext(),RecyclerView.VERTICAL,false);
+        linearLayoutHorizontalManager = new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false);
+        linearLayoutVerticalManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
 
         txtTitleDevice = rootView.findViewById(R.id.txtTitle);
         txtValueType = rootView.findViewById(R.id.txtValueType);
@@ -231,6 +249,8 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
         fat.hide();
         containerMap = rootView.findViewById(R.id.containerMap);
         loading = rootView.findViewById(R.id.loading);
+        loadingProgressBar = rootView.findViewById(R.id.loadingProgressBar);
+        loadingProgressBar.setIndeterminateDrawable(new FoldingCube());
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
@@ -239,79 +259,259 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        try {
-            mqttAndroidClient.subscribe(topics,qos);
-        } catch (MqttException e) {
-            throw new RuntimeException(e);
-        }
+        if (this.getArguments() != null) {
+            MqttClientManager mqttClient = (MqttClientManager) this.getArguments().getSerializable(ARG_PARAM_MQTT);
+            if (mqttClient != null) {
+                mqttAndroidClient = mqttClient.getMqttClient();
+                Log.d(TAG, "OK");
+            }
 
-        setRecyclerView();
+        }
+        Log.d(TAG, "onViewCreated");
+        setRecyclerView(mqttAndroidClient);
+        new Handler().postDelayed(() -> {
+            loading.setVisibility(View.GONE);
+            containerMap.setVisibility(View.VISIBLE);
+        }, 5000);
     }
-    private void setRecyclerView(){
+
+    private void setRecyclerView(MqttAndroidClient client) {
         // feature
         rvFeatures.setLayoutManager(linearLayoutHorizontalManager);
         deviceFeaturesAdapter.setData(getListFeatures());
         rvFeatures.setAdapter(deviceFeaturesAdapter);
         rvFeatures.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
-        imgBtnClose.setOnClickListener(v->  setAnimation(SLIDE_DOWN,containerFeatures));
+
+        imgBtnClose.setOnClickListener(v -> setAnimation(SLIDE_DOWN, containerFeatures));
         //menu
         listDevice.setLayoutManager(linearLayoutVerticalManager);
-        deviceMenuAdapter = new DeviceMenuAdapter(getListDevices(), deviceMenu -> {
-            Log.d(TAG,"distance: "+ distance);
-            checkMenu = false;
-            requireActivity().runOnUiThread(() -> {
-                setAnimation(SLIDE_LEFT_OUT,listDevice);
-                clickInterceptor.setVisibility(View.GONE);
-                txtTitleDevice.setText(deviceMenu.getTitle());
-                txtValueType.setText(deviceMenu.getType());
-                deviceImage.setImageResource(deviceMenu.getResourceId());
-                setAnimation(SLIDE_UP, containerFeatures);
-            });
-        });
+        deviceMenuAdapter = new DeviceMenuAdapter();
+        Bundle args = this.getArguments();
+        if (args != null) {
+            userName = args.getString(ARG_PARAM_USER_NAME);
+        }
+        if (userName == null) {
+            userName = "Tester";
+        }
 
         //click items
-        Log.d(TAG, "text: "+ txtTitleDevice);
+        Log.d(TAG, "text: " + txtTitleDevice);
         listDevice.setAdapter(deviceMenuAdapter);
         listDevice.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        showDevice(userName, client);
+        client.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
 
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) {
+                Log.d(TAG, "Topic: " + topic);
+                String msg = new String(message.getPayload());
+                Log.d(TAG, msg);
+                Log.d(TAG, "destination : " + destinationDefault);
+
+                assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
+                origin = Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
+                        , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
+                Log.d(TAG, "origin: " + origin);
+
+                deviceLocationUpdate.put(topic, updateDestinationOnMap(msg));
+
+                destinationDefault = updateDestinationOnMap(msg);
+
+                symbolDefault = updateSymbolDestination(ICON_DESTINATION_DEVICE_V1_ID, destinationOrigin, symbolDefault);
+                symbolDefault = updateSymbolDestination(ICON_DESTINATION_DEVICE_V1_ID, destinationDefault, symbolDefault);
+                Log.d(TAG, "destinationUpdate: " + destinationDefault);
+
+                distance = TurfMeasurement.distance(origin, destinationDefault, TurfConstants.UNIT_DEFAULT);
+                Log.d(TAG, "distance mqtt: " + distance);
+                symbol = updateSymbolDestination(ICON_DESTINATION_Update_DEVICE_V1_ID, destinationDefault, symbol);
+
+                updateValuesFeature(topic, origin, destinationDefault);
+//                getSingleRoute(destinationOrigin, destinationDefault);
+                setDotTwoPoints(destinationOrigin,destinationDefault);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+
+    }
+    private void setDotTwoPoints(Point pointLast,Point destination){
+            for (Point p : Objects.requireNonNull(getBetweenTwoPoints(pointLast, destination))) {
+
+                Log.d(TAG, "Check v 2: " + p.latitude() + ", " + p.longitude());
+                requireActivity().runOnUiThread(() -> {
+                    symbolsToDelete.add(symbol);
+                    symbol = setSymbol(ICON_DESTINATION_Update_DEVICE_V1_ID, p);
+
+                });
+            }
+
+        }
+
+
+    private void showDevice(String name, MqttAndroidClient client) {
+        Call<List<Device>> call = apiService.showDevicesFromUser(name);
+
+        call.enqueue(new Callback<List<Device>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Device>> call, @NonNull Response<List<Device>> response) {
+                if (response.isSuccessful()) {
+                    List<Device> deviceList = response.body();
+                    Log.d(TAG, "Ok show");
+                    if (deviceList != null) {
+                        topics = getArrayTopic(deviceList);
+                        try {
+                            Log.d(TAG, "Ok sub:" + Arrays.toString(topics));
+                            client.subscribe(topics, qos);
+                        } catch (MqttException e) {
+                            throw new RuntimeException(e);
+                        }
+                        addAndChangeDevice(deviceList);
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Device>> call, @NonNull Throwable t) {
+                Log.d(TAG, "show Devices : onFailure: ");
+            }
+        });
+    }
+
+    private void setLastPointDevice(String code) {
+        Call<LastProperty> call = apiService.getLastPropertyByCode(code);
+        call.enqueue(new Callback<LastProperty>() {
+            @Override
+            public void onResponse(@NonNull Call<LastProperty> call, @NonNull Response<LastProperty> response) {
+                if (response.isSuccessful()) {
+
+                    if (response.body() != null) {
+                        lastProperty = response.body();
+                        Log.d(TAG, "`response last location" + lastProperty.toString());
+                        destinationOrigin = updateDestinationOnMap(lastProperty.getLatest_property().getMessage());
+                        destinationDefault = destinationOrigin;
+                        symbolDefault = updateSymbolDestination(ICON_DESTINATION_DEVICE_V1_ID, destinationOrigin, symbolDefault);
+                        deviceLocationUpdate.put("devices/" + code, destinationOrigin);
+                        assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
+                        origin = Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
+                                , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
+                        updateValuesFeature("devices/" + code, origin, destinationOrigin);
+                    } else {
+                        Log.e(TAG, "get LastKnownLocation of device is null");
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LastProperty> call, @NonNull Throwable t) {
+
+            }
+        });
+
+    }
+
+    @NonNull
+    private String[] getArrayTopic(@NonNull List<Device> devices) {
+        String[] arrayTopic = new String[devices.size()];
+        qos = new int[devices.size()];
+        int i = 0;
+        for (Device device : devices) {
+
+            arrayTopic[i] = "devices/" + device.getCodeDevice();
+            qos[i] = 0;
+            deviceFeaturesMap.put(arrayTopic[i], getListFeatures());
+            setLastPointDevice(device.getCodeDevice());
+            i++;
+        }
+        return arrayTopic;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void addAndChangeDevice(List<Device> list) {
+//            devices.add(new DeViceMenuV2(R.color.green_status, R.drawable.ba_battery, R.drawable.images, "Devices01", "None"));
+        deviceMenuAdapter.setData(list);
+        Objects.requireNonNull(listDevice.getAdapter()).notifyDataSetChanged();
+        btnMenu.setOnClickListener(v -> {
+            setAnimation(SLIDE_LEFT_IN, listDevice);
+            clickInterceptor.setVisibility(View.VISIBLE);
+
+        });
         clickInterceptor.setOnClickListener(v -> {
-            checkMenu = false;
-            setAnimation(SLIDE_LEFT_OUT,listDevice);
+            setAnimation(SLIDE_LEFT_OUT, listDevice);
             clickInterceptor.setVisibility(View.GONE);
         });
-        btnMenu.setOnClickListener(v->   {
-            if(!checkMenu){
-                checkMenu = true;
-                setAnimation(SLIDE_LEFT_IN,listDevice);
-                clickInterceptor.setVisibility(View.VISIBLE);
+        deviceMenuAdapter.setClickListener(deviceMenu -> {
+
+        });
+        deviceMenuAdapter.setBtnFindClick(deviceMenu -> {
+            setCamera(Objects.requireNonNull(deviceLocationUpdate.get("devices/" + deviceMenu.getCodeDevice())));
+            symbolDefault = updateSymbolDestination(ICON_DESTINATION_DEVICE_V1_ID, deviceLocationUpdate.get("devices/" + deviceMenu.getCodeDevice()), symbolDefault);
+        });
+        deviceMenuAdapter.setBtnInfoClick(deviceMenu -> {
+            deviceCheck = deviceMenu;
+            Log.d(TAG, "distance: " + distance);
+            Log.d(TAG, "id device: " + deviceMenu.getIdDevice());
+            if (list != null) {
+                setAnimation(SLIDE_LEFT_OUT, listDevice);
+                txtTitleDevice.setText(deviceMenu.getNameDevice());
+                txtValueType.setText(deviceMenu.getTypeDevice());
+                deviceImage.setImageBitmap(deviceMenu.getBitmap());
+                if (deviceFeaturesMap != null) {
+                    Log.d(TAG, "Device FeaturesMap");
+                    deviceFeaturesAdapter.setData(deviceFeaturesMap.get("devices/" + deviceMenu.getCodeDevice()));
+                    Objects.requireNonNull(rvFeatures.getAdapter()).notifyDataSetChanged();
+                }
+                new Handler().postDelayed(() -> setAnimation(SLIDE_LEFT_OUT, clickInterceptor), 200);
+                new Handler().postDelayed(() -> setAnimation(SLIDE_UP, containerFeatures), 500);
             }
 
         });
-    }
-    private void setAnimation(int i,View v){
 
-        switch (i){
+        btnFind.setOnClickListener(v -> new Handler().postDelayed(() -> {
+            setAnimation(SLIDE_DOWN, containerFeatures);
+            assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
+            origin = Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
+                    , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
+            symbolDefault = updateSymbolDestination(ICON_DESTINATION_DEVICE_V1_ID, deviceLocationUpdate.get("devices/" + deviceCheck.getCodeDevice()), symbolDefault);
+            getSingleRoute(origin, deviceLocationUpdate.get("devices/" + deviceCheck.getCodeDevice()));
+        }, 1000));
+//        checkDevice(list);
+
+    }
+
+    private void setAnimation(int i, View v) {
+
+        switch (i) {
             case 1:
-                animation= AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down);
+                animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down);
                 break;
             case 2:
-                animation= AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
+                animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
                 break;
             case 3:
-                animation= AnimationUtils.loadAnimation(requireContext(), R.anim.slide_left_out_menu);
+                animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_left_out_menu);
                 break;
             case 4:
-                animation= AnimationUtils.loadAnimation(requireContext(), R.anim.slide_left_in_menu);
+                animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_left_in_menu);
                 break;
             default:
                 animation = null;
 
         }
         int finalIndex;
-        if(i%2 == 0){
+        if (i % 2 == 0) {
             finalIndex = 2;
-        }else{
+        } else {
             finalIndex = 1;
         }
         animationListener = new Animation.AnimationListener() {
@@ -322,7 +522,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Log.d(TAG, "onAnimationEnd: "+i);
+                Log.d(TAG, "onAnimationEnd: " + i);
                 switch (finalIndex) {
                     case 1:
                         v.setVisibility(View.GONE);
@@ -341,79 +541,60 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
             }
         };
-        Log.d(TAG,"animation: "+ animation);
-        if(animation != null) {
-            requireActivity().runOnUiThread(()-> v.startAnimation(animation));
+        Log.d(TAG, "animation: " + animation);
+        if (animation != null) {
+            requireActivity().runOnUiThread(() -> v.startAnimation(animation));
             animation.setAnimationListener(animationListener);
         }
 
     }
 
+
     @NonNull
-    private List<DeviceMenu> getListDevices(){
-        List<DeviceMenu> list = new ArrayList<>();
-        list.add(new DeviceMenu(R.drawable.images,"Device 01", "DOG"));
-        list.add(new DeviceMenu(R.drawable.image2,"Device 02","CAT"));
-        list.add(new DeviceMenu(R.drawable.image3,"Device 03","N/A"));
+    private List<DeviceFeatures> getListFeatures() {
+        List<DeviceFeatures> list = new ArrayList<>();
+        list.add(new DeviceFeatures(R.drawable.distance, "Distance", "0 Km"));
+        list.add(new DeviceFeatures(R.drawable.sandglass, "Duration", "0 Hour"));
+        list.add(new DeviceFeatures(R.drawable.paw, "Journey", "0 Km"));
         return list;
     }
-    @NonNull
-    private List<DeviceFeatures> getListFeatures(){
-        List<DeviceFeatures> list = new ArrayList<>();
-        list.add(new DeviceFeatures(R.drawable.distance,"Distance","0 Km"));
-        list.add(new DeviceFeatures(R.drawable.sandglass,"Duration","0 Hour"));
-        list.add(new DeviceFeatures(R.drawable.paw,"Journey","0 Km"));
-            return list;
-    }
 
-    @Override
-    public void connectionLost(Throwable cause) {
-
-    }
-
-    @Override
-    public void messageArrived(String topic, MqttMessage message) {
-        Log.d(TAG,"Topic: "+ topic);
-        if(topic.equals(topics[0])){
-            String msg = new String(message.getPayload());
-            Log.d(TAG, msg);
-            Log.d(TAG, "destination : "+destinationDefault);
-            assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
-            origin = Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
-                    ,mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
-            Log.d(TAG, "origin: "+origin);
-            destinationDefault = updateDestinationOnMap(msg);
-            symbolDefault = updateSymbolDestination(ICON_DESTINATION_DEVICE_V1_ID,destinationDefault,symbolDefault);
-
-            Log.d(TAG,"destinationUpdate: "+destinationDefault);
-            distance = TurfMeasurement.distance(origin, destinationDefault, TurfConstants.UNIT_DEFAULT);
-            Log.d(TAG,"distance: "+ distance);
-            symbol = updateSymbolDestination(ICON_DESTINATION_Update_DEVICE_V1_ID,destinationDefault,symbol);
-            deviceFeaturesAdapter.updateTextForItem(0,new DecimalFormat("0.00").format(distance) + " Km");
-            deviceFeaturesAdapter.updateTextForItem(1,1 + " Hour");
-            btnFind.setOnClickListener(v-> new Thread(()->{
-                setAnimation(SLIDE_DOWN,containerFeatures);
-                getSingleRoute(origin,destinationDefault);
-            }).start());
-
-
+    @SuppressLint("NotifyDataSetChanged")
+    private void updateValuesFeature(String topic, Point a, Point b) {
+        distance = TurfMeasurement.distance(a, b, TurfConstants.UNIT_DEFAULT);
+        if (distance < 1) {
+            distance = distance * 1000;
+            Objects.requireNonNull(deviceFeaturesMap.get(topic)).get(0).setValue(new DecimalFormat("0.00").format(distance) + " m");
+            Objects.requireNonNull(deviceFeaturesMap.get(topic)).get(1).setValue(getAppUsageTime(requireContext(), "com.petweio.projectdoan") / (1000 * 60 * 60) + " Hour");
+            Objects.requireNonNull(deviceFeaturesMap.get(topic)).get(2).setValue(new DecimalFormat("0.00").format(journey) + " m");
+        } else {
+            Objects.requireNonNull(deviceFeaturesMap.get(topic)).get(0).setValue(new DecimalFormat("0.00").format(distance) + " Km");
+            Objects.requireNonNull(deviceFeaturesMap.get(topic)).get(1).setValue(getAppUsageTime(requireContext(), "com.petweio.projectdoan") / (1000 * 60 * 60) + " Hour");
+            Objects.requireNonNull(deviceFeaturesMap.get(topic)).get(2).setValue(new DecimalFormat("0.00").format(journey) + " Km");
         }
+        if (deviceCheck != null && deviceFeaturesMap != null) {
+            Log.d(TAG, "Device FeaturesMap check" +deviceCheck.toString());
+            if (topic.equals("devices/" + deviceCheck.getCodeDevice())) {
+                Log.d(TAG, "Device FeaturesMap");
+                deviceFeaturesAdapter.setData(deviceFeaturesMap.get("devices/" + deviceCheck.getCodeDevice()));
+                Objects.requireNonNull(rvFeatures.getAdapter()).notifyDataSetChanged();
+            }
+        }
+
     }
 
-    @Override
-    public void deliveryComplete(IMqttDeliveryToken token) {
-
-    }
 
     @Override
     public void onMapReady(@NonNull MapboxMap map) {
         mapboxMap = map;
         mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/fight242001/clmrk7ric029t01qx75rc7soa"), style -> {
             setupGesturesListener();
-            fat.setOnClickListener(v->{
+            fat.setOnClickListener(v -> {
+                checkAndEnableGPS(style);
                 assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
                 setCamera(Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
-                        ,mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude()));
+                        , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude()));
+                Log.d(TAG, "Vi tri cua toi: " + mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude() + "," + mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
                 mapboxMap.addOnMoveListener(onMoveListener);
                 fat.hide();
 
@@ -421,12 +602,11 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
 
             style.addImage(ICON_DESTINATION_DEVICE_V1_ID, Objects.requireNonNull(createLayeredCircleBitmap(getContext()
-                    ,R.drawable.ic_mapbox_user_red,R.drawable.ic_mapbox_mylocation_bg
-                    ,R.drawable.ic_mapbox_user_shadow)));
+                    , R.drawable.ic_mapbox_user_red, R.drawable.ic_mapbox_mylocation_bg
+                    , R.drawable.ic_mapbox_user_shadow)));
             style.addImage(ICON_DESTINATION_Update_DEVICE_V1_ID, Objects.requireNonNull(createLayeredCircleBitmap(getContext()
-                    ,R.drawable.ic_mapbox_user_green,R.drawable.ic_mapbox_mylocation_bg
-                    ,R.drawable.ic_mapbox_user_shadow)));
-
+                    , R.drawable.ic_mapbox_user_green, R.drawable.ic_mapbox_mylocation_bg
+                    , R.drawable.ic_mapbox_user_shadow)));
 
 
             // Create a SymbolManager.
@@ -434,8 +614,8 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
             // Set non-data-driven properties.
             symbolManager.setIconAllowOverlap(true);
             symbolManager.setTextAllowOverlap(true);
-            symbolDefault = setSymbol(ICON_DESTINATION_DEVICE_V1_ID,destinationDefault);
-            symbol = setSymbol(ICON_DESTINATION_Update_DEVICE_V1_ID,destinationDefault);
+            symbolDefault = setSymbol(ICON_DESTINATION_DEVICE_V1_ID, destinationDefault);
+            symbol = setSymbol(ICON_DESTINATION_Update_DEVICE_V1_ID, destinationDefault);
 
 
             initLayers(style);
@@ -443,20 +623,17 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
 
             enableLocationComponent(style);
-            mqttAndroidClient.setCallback(this);
-
             Log.e(TAG, symbolDefault.toString());
 
         });
-        new Handler().postDelayed(() -> {
-            loading.setVisibility(View.INVISIBLE);
-            containerMap.setVisibility(View.VISIBLE);
-        }, 5000);
+
     }
+
     private void setupGesturesListener() {
         mapboxMap.addOnMoveListener(onMoveListener);
     }
-    private void setCamera(Point p){
+
+    private void setCamera(@NonNull Point p) {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(p.latitude(), p.longitude()))
                 .zoom(15)
@@ -469,11 +646,26 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
     }
 
-    private void getSingleRoute(Point origin,Point destination) {
+    private void setCameraTwoPoint(@NonNull Point point1, @NonNull Point point2) {
+        // Tính toán tọa độ trung tâm của hai điểm
+        double centerLatitude = (point1.latitude() + point2.latitude()) / 2;
+        double centerLongitude = (point1.longitude() + point2.longitude()) / 2;
+
+// Di chuyển camera đến tọa độ trung tâm
+        CameraPosition position = new CameraPosition.Builder()
+                .target(new LatLng(centerLatitude, centerLongitude)) // Đặt tọa độ trung tâm
+                .zoom(10) // Đặt mức độ thu phóng
+                .build();
+
+        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position));
+
+    }
+
+    private void getSingleRoute(Point origin, Point destination) {
         List<Point> points = new ArrayList<>();
         points.add(origin);
         points.add(destination);
-        client = MapboxDirections.builder()
+        MapboxDirections client = MapboxDirections.builder()
                 .accessToken(getString(R.string.token_mapbox))
                 .routeOptions(
                         RouteOptions.builder()
@@ -482,6 +674,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
                                 .overview(DirectionsCriteria.OVERVIEW_FULL)
                                 .build())
                 .build();
+        setCameraTwoPoint(origin, destination);
 
         client.enqueueCall(new Callback<DirectionsResponse>() {
             @SuppressLint("StringFormatInvalid")
@@ -495,22 +688,22 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
                 } else if (response.body().routes().size() < 1) {
                     Log.e(TAG, "No routes found");
                     return;
-                }else {
+                } else {
                     walkingRoute = response.body().routes().get(0);
                     for (DirectionsRoute route : response.body().routes()) {
                         List<Point> decode = PolylineUtils.decode(Objects.requireNonNull(route.geometry()), PRECISION_6);
-                        Point pointLast =decode.get(decode.size() - 1) ;
+                        Point pointLast = decode.get(decode.size() - 1);
                         showRouteLine(decode);
                         // I need here more points
-                        if(symbolsToDelete != null){
+                        if (symbolsToDelete != null) {
                             symbolManager.delete(symbolsToDelete);
                         }
-                        for (Point p : Objects.requireNonNull(getBetweenTwoPoints(pointLast, destination))){
+                        for (Point p : Objects.requireNonNull(getBetweenTwoPoints(pointLast, destination))) {
 
-                            Log.d(TAG,"Check v 2: "+p.latitude() + ", " + p.longitude());
-                            requireActivity().runOnUiThread(()-> {
+                            Log.d(TAG, "Check v 2: " + p.latitude() + ", " + p.longitude());
+                            requireActivity().runOnUiThread(() -> {
                                 symbolsToDelete.add(symbol);
-                                symbol = setSymbol(ICON_DESTINATION_Update_DEVICE_V1_ID,p);
+                                symbol = setSymbol(ICON_DESTINATION_Update_DEVICE_V1_ID, p);
 
                             });
                         }
@@ -519,12 +712,12 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
                 }
 
-                }
+            }
 
 
             @Override
             public void onFailure(@NonNull Call<DirectionsResponse> call, @NonNull Throwable throwable) {
-                Log.e(TAG,"Error: " + throwable.getMessage());
+                Log.e(TAG, "Error: " + throwable.getMessage());
                 Toast.makeText(getActivity(),
                         "Error: " + throwable.getMessage(),
                         Toast.LENGTH_SHORT).show();
@@ -537,7 +730,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
         // Add the LineLayer to the map. This layer will display the directions route.
         routeLayer.setProperties(
-                PropertyFactory.lineDasharray(new Float[] {0.01f, 2f}),
+                PropertyFactory.lineDasharray(new Float[]{0.01f, 2f}),
                 PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
                 PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
                 PropertyFactory.lineWidth(5f),
@@ -555,11 +748,11 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
                 iconAllowOverlap(true),
                 iconOffset(new Float[]{0f, -9f})));
     }
+
     private void initSource(@NonNull Style loadedMapStyle) {
         GeoJsonSource routeLineSource = new GeoJsonSource(ROUTE_SOURCE_ID);
         loadedMapStyle.addSource(routeLineSource);
     }
-
 
 
     private void showRouteLine(List<Point> routeCoordinates) {
@@ -568,7 +761,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
             mapboxMap.getStyle(style -> {
                 GeoJsonSource routeLineSource = style.getSourceAs(ROUTE_SOURCE_ID);
                 assert routeLineSource != null;
-                routeLineSource.setGeoJson(FeatureCollection.fromFeatures(new Feature[] {Feature.fromGeometry(
+                routeLineSource.setGeoJson(FeatureCollection.fromFeatures(new Feature[]{Feature.fromGeometry(
                         LineString.fromLngLats(routeCoordinates)
                 )}));
                 // Create a LineString with the directions route's geometry and
@@ -579,8 +772,9 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
             });
         }
     }
+
     @Nullable
-    private List<Point> getBetweenTwoPoints(Point A, Point B){
+    private List<Point> getBetweenTwoPoints(@NonNull Point A, @NonNull Point B) {
         List<Point> pointsList = new ArrayList<>();
         double m = (B.longitude() - A.longitude()) / (B.latitude() - A.latitude());
         double b = A.longitude() - m * A.latitude();
@@ -597,7 +791,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
             // Kiểm tra xem điểm hiện tại có nằm giữa hai điểm A và B hay không.
             if (Math.min(A.latitude(), B.latitude()) < x && x < Math.max(A.latitude(), B.latitude()) &&
                     Math.min(A.longitude(), B.longitude()) < y && y < Math.max(A.longitude(), B.longitude())) {
-                pointsList.add(Point.fromLngLat(y,x));
+                pointsList.add(Point.fromLngLat(y, x));
             }
             x = x + 0.00001d;
         } while (x <= Math.max(A.latitude(), B.latitude()));
@@ -606,33 +800,36 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
         return pointsList;
     }
-    private Symbol setSymbol(String id, @NonNull Point p){
+
+    private Symbol setSymbol(String id, @NonNull Point p) {
         float size = 1.3f;
         // Create a symbol at the specified location.
-        if(id.equals(ICON_DESTINATION_Update_DEVICE_V1_ID)){
+        if (id.equals(ICON_DESTINATION_Update_DEVICE_V1_ID)) {
             size = 0.5f;
         }
-        symbolOptions = new SymbolOptions()
+        SymbolOptions symbolOptions = new SymbolOptions()
                 .withLatLng(new LatLng(p.latitude(), p.longitude()))
                 .withIconImage(id)
                 .withIconSize(size);
         // Use the manager to draw the symbol.
         return symbolManager.create(symbolOptions);
     }
-    private Symbol updateSymbolDestination(String id,Point newDestination,Symbol symbolTest){
-        if(destinationDefault != null){
-            Log.d(TAG,"Symbol manager: "+symbolManager.toString());
-            Log.d(TAG,"Symbol Test: "+ symbolTest.getId());
-            try{
+
+    private Symbol updateSymbolDestination(String id, Point newDestination, Symbol symbolTest) {
+        if (destinationDefault != null) {
+            Log.d(TAG, "Symbol manager: " + symbolManager.toString());
+            Log.d(TAG, "Symbol Test: " + symbolTest.getId());
+            try {
+
                 symbolManager.delete(symbolTest);
-            }catch (Exception e){
-                Log.e(TAG,"Symbol error: "+ e);
+            } catch (Exception e) {
+                Log.e(TAG, "Symbol error: " + e);
             }
 
         }
-        if(newDestination != null){
+        if (newDestination != null) {
             // Create a symbol at the specified location.
-          symbolTest =  setSymbol(id, newDestination);
+            symbolTest = setSymbol(id, newDestination);
         }
         return symbolTest;
     }
@@ -640,21 +837,41 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
     @NonNull
     private Point updateDestinationOnMap(String destinationInfo) {
         // Xử lý và cập nhật điểm đích trên bản đồ ở đây
-        destinationInfo = destinationInfo.replaceAll(" ","");
+        destinationInfo = destinationInfo.replaceAll(" ", "").replace("[", "").replace("]", "");
         String[] destinationString = splitString(destinationInfo);
-        Log.d(TAG, "Lat: "+destinationString[0] +" Long: "+ destinationString[1]);
+        Log.d(TAG, "Lat: " + destinationString[0] + " Long: " + destinationString[1]);
 
-        return Point.fromLngLat(Double.parseDouble(destinationString[1]),Double.parseDouble(destinationString[0]));
+        return Point.fromLngLat(Double.parseDouble(destinationString[1]), Double.parseDouble(destinationString[0]));
     }
 
-    public String[] splitString(@NonNull String s){
-        String[] parts = s.split(",") ;
-        return parts;
+    public String[] splitString(@NonNull String s) {
+        return s.split(",");
     }
 
-    @SuppressWarnings( {"MissingPermission"})
+    private void checkAndEnableGPS(Style style) {
+        locationComponent = mapboxMap.getLocationComponent();
+        LocationComponentActivationOptions options = LocationComponentActivationOptions
+                .builder(requireContext(), style)
+                .useDefaultLocationEngine(true)
+                .build();
+
+        locationComponent.activateLocationComponent(options);
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        locationComponent.setLocationComponentEnabled(true);
+
+        if (!locationComponent.isLocationComponentActivated()) {
+            // Yêu cầu bật GPS
+            locationComponent.activateLocationComponent(options);
+            locationComponent.setLocationComponentEnabled(true);
+        }
+    }
+
+
     private void enableLocationComponent(Style style) {
-        Log.d(TAG, "Location permission: "+ getActivity());
+        Log.d(TAG, "Location permission: " + getActivity());
 //         Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
 
@@ -665,6 +882,10 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
             locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(requireActivity().getApplicationContext(), style).build());
 
             // Enable to make component visible
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                return;
+            }
             locationComponent.setLocationComponentEnabled(true);
 
             // Set the component's camera mode
@@ -737,7 +958,25 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
         drawable.draw(canvas);
         return bitmap;
     }
+    // Hàm này trả về thời gian hoạt động của ứng dụng với gói "packageName" trong millis.
+    public long getAppUsageTime(@NonNull Context context, String packageName) {
+        UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+        long currentTime = System.currentTimeMillis();
+        long startTime = currentTime - 86400000;  // Lấy dữ liệu trong vòng 24 giờ trước đó
 
+        List<UsageStats> appUsageStats = usageStatsManager.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY, startTime, currentTime);
+
+        long totalUsageTime = 0;
+
+        for (UsageStats stats : appUsageStats) {
+            if (stats.getPackageName().equals(packageName)) {
+                totalUsageTime += stats.getTotalTimeInForeground();
+            }
+        }
+
+        return totalUsageTime;
+    }
 
     @Override
     public void onExplanationNeeded(List<String> list) {
@@ -760,24 +999,32 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        Log.d(TAG,"OnResume");
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mapView.onStart();
+        Log.d(TAG,"OnStart");
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mapView.onStop();
+        try {
+            mqttAndroidClient.unsubscribe(topics);
+        } catch (MqttException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d(TAG,"OnStop");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        Log.d(TAG,"OnPause");
         mapView.onPause();
     }
 
@@ -793,6 +1040,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
         super.onDestroy();
         // Cancel the Directions API request
         mapView.onDestroy();
+
     }
 
     @Override

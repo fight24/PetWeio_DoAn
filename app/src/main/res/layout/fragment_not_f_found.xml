@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.NotFFoundFragment">
+    <LinearLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@color/bluegray_800"
+        tools:ignore="UselessParent">
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/white"
+        style="@style/SpinKitView.Large.DoubleBounce"
+        android:layout_gravity="center"
+        android:visibility="visible"/>
+    <!-- TODO: Update blank fragment layout -->
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/containerLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:text="You haven't devices"
+            android:fontFamily="@font/black_ops_one"
+            android:textSize="30sp"
+            android:layout_gravity="center"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+</FrameLayout>

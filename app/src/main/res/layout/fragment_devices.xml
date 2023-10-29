@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".fragments.DeviceFragment"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:background="@drawable/half_circle"
+        />
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/trans"
+            android:importantForAccessibility="no"
+            android:src="@drawable/arrow_back"
+            tools:ignore="TouchTargetSizeCheck,ImageContrastCheck" />
+    <RelativeLayout
+        android:id="@+id/imagelayout"
+        android:paddingTop="3dp"
+        android:layout_marginTop="2dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_device"
+            android:layout_width="105dp"
+            android:layout_height="105dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="55dp"
+            android:layout_marginEnd="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_not_found_1150x647"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="5dp"
+            tools:ignore="RedundantNamespace,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/deviceName_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_device"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:fontFamily="@font/black_ops_one"
+            android:text="Device 01- Dog"
+            android:textColor="#ffff"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText,TextContrastCheck" />
+
+    </RelativeLayout>
+  <LinearLayout
+      android:id="@+id/itemLayout"
+      android:layout_marginTop="-20dp"
+      android:layout_centerHorizontal="true"
+      android:layout_below="@+id/imagelayout"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <RelativeLayout
+          android:layout_marginEnd="70dp"
+          android:layout_marginTop="7dp"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+          <at.markushi.ui.CircleButton
+              android:id="@+id/NotifyButton"
+              android:layout_width="60dp"
+              android:layout_height="60dp"
+              android:elevation="5dp"
+              android:src="@drawable/notifications"
+              app:cb_color="#efefef"
+              app:cb_pressedRingWidth="3dip"
+              tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+      </RelativeLayout>
+     <RelativeLayout
+         android:layout_marginTop="30dp"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content">
+         <at.markushi.ui.CircleButton
+             android:id="@+id/HistoryButton"
+             android:layout_width="60dp"
+             android:layout_height="60dp"
+             android:elevation="5dp"
+             android:src="@drawable/ic_history"
+             app:cb_color="#efefef"
+             app:cb_pressedRingWidth="3dip"
+             tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+     </RelativeLayout>
+
+     <RelativeLayout
+         android:layout_marginStart="70dp"
+         android:layout_marginTop="7dp"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content">
+         <at.markushi.ui.CircleButton
+             android:id="@+id/EditButton"
+             android:layout_width="60dp"
+             android:layout_height="60dp"
+             android:elevation="5dp"
+             android:src="@drawable/baseline_mode_edit_24"
+             app:cb_color="#efefef"
+             app:cb_pressedRingWidth="3dip"
+             tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
+     </RelativeLayout>
+  </LinearLayout>
+<LinearLayout
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="50dp"
+    android:id="@+id/viewLineCharts"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/itemLayout"
+    android:orientation="vertical" >
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChartBattery"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+
+        />
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChartTimeAction"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+</LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:visibility="invisible"
+                android:background="#68000000"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:id="@+id/linearLayoutEdit"
+                >
+                <LinearLayout
+                    android:background="@drawable/round_back_todo_pri_sizesmall"
+                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical" >
+                    <RelativeLayout
+                        android:id="@+id/itemEdit1"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:fontFamily="@font/alfa_slab_one"
+                            android:text="EDIT"
+                            android:textAlignment="center"
+                            android:textColor="#283593"
+                            android:textSize="35sp"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
+                    </RelativeLayout>
+
+                    <View
+
+                        android:id="@+id/lineVectorOne"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="@dimen/_10pxh"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="@dimen/_10pxh"
+                        android:background="@color/white" />
+
+                    <RelativeLayout
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/txtNmDeviceEdit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:fontFamily="@font/alfa_slab_one"
+                            android:text="Name : "
+                            android:textColor="#283593"
+                            android:textSize="20sp"
+                            tools:ignore="HardcodedText" />
+
+                        <EditText
+                            android:id="@+id/edtNmDeviceEdit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:layout_toEndOf="@id/txtNmDeviceEdit"
+                            android:autofillHints="name"
+                            android:fontFamily="@font/black_ops_one"
+                            android:hint="Edit Name of the device"
+                            android:textAlignment="center"
+                            android:textColor="#283593"
+                            android:textColorHint="#83495A61"
+                            android:textSize="13sp"
+                            tools:ignore="HardcodedText,TextFields,TouchTargetSizeCheck,VisualLintTextFieldSize" />
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/txtTypeDeviceEdit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:fontFamily="@font/alfa_slab_one"
+                            android:text="Type : "
+                            android:textColor="#283593"
+                            android:textSize="20sp"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
+
+                        <EditText
+                            android:id="@+id/edtTypeDeviceEdit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:layout_toEndOf="@id/txtTypeDeviceEdit"
+                            android:autofillHints="name"
+                            android:fontFamily="@font/black_ops_one"
+                            android:hint="Edit Type of the device"
+                            android:textAlignment="center"
+                            android:textColor="#283593"
+                            android:textColorHint="#83495A61"
+                            android:textSize="13sp"
+                            tools:ignore="HardcodedText,TextFields,TouchTargetSizeCheck,VisualLintTextFieldSize,TextContrastCheck" />
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnEditCancel"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_gravity="center"
+                            android:background="@drawable/round_back_todo_white"
+                            android:elevation="4dp"
+                            android:fontFamily="@font/seymour_one"
+                            android:text="Cancel"
+                            android:textColor="#0277BD"
+                            tools:ignore="HardcodedText,DuplicateSpeakableTextCheck,TextSizeCheck" />
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnEditOk"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/round_back_todo_white"
+                            android:fontFamily="@font/seymour_one"
+                            android:gravity="center"
+                            android:layout_marginBottom="10dp"
+                            android:text="Ok"
+                            android:layout_alignParentEnd="true"
+                            android:elevation="4dp"
+                            android:textColor="#0277BD"
+                            tools:ignore="HardcodedText" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:visibility="invisible"
+                android:background="#68000000"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:id="@+id/linearLayoutNotification"
+                >
+                <LinearLayout
+                    android:background="@drawable/round_back_todo_pri_sizesmall"
+                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical" >
+                    <RelativeLayout
+                        android:id="@+id/itemNoti"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:fontFamily="@font/alfa_slab_one"
+                            android:text="WARNING"
+                            android:textAlignment="center"
+                            android:textColor="#283593"
+                            android:textSize="35sp"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
+                    </RelativeLayout>
+
+                    <View
+
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="@dimen/_10pxh"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="@dimen/_10pxh"
+                        android:background="@color/white" />
+
+
+                    <RelativeLayout
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tvWarning"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:fontFamily="@font/alfa_slab_one"
+                            android:text="Do you want to enable alerts for this device? "
+                            android:textAlignment="center"
+                            android:textColor="#283593"
+                            android:textSize="20sp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnNoTiCancel"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_gravity="center"
+                            android:background="@drawable/round_back_todo_white"
+                            android:elevation="4dp"
+                            android:fontFamily="@font/seymour_one"
+                            android:text="No"
+                            android:textColor="#0277BD"
+                            tools:ignore="HardcodedText,DuplicateSpeakableTextCheck,TextSizeCheck" />
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnNoTiOk"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/round_back_todo_white"
+                            android:fontFamily="@font/seymour_one"
+                            android:gravity="center"
+                            android:layout_marginBottom="10dp"
+                            android:text="Yes"
+                            android:layout_alignParentEnd="true"
+                            android:elevation="4dp"
+                            android:textColor="#0277BD"
+                            tools:ignore="HardcodedText" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+
+    </RelativeLayout>
+</FrameLayout>

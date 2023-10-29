@@ -4,24 +4,168 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.HomeFragment"
-    android:background="@color/green_50"
+    android:background="@color/indigo_50"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/home"
-        android:gravity="center"
-        android:textSize="50sp"
-        />
-    <TextView
-        android:id="@+id/tv_param"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/home"
-        android:gravity="bottom|center"
-        android:textSize="20sp"
-        />
+    <LinearLayout
 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:background="@drawable/round_back_todo"
+                android:layout_margin="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                tools:ignore="UselessParent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:elevation="10dp"
+                    android:src="@color/white"
+                    tools:ignore="ImageContrastCheck" />
+                <RelativeLayout
+                    android:background="@drawable/round_back_todo_white"
+                    android:layout_width="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="8dp"
+                    android:elevation="4dp"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/txtUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:textSize="14sp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_toEndOf="@+id/imgUser"
+                        android:fontFamily="@font/seymour_one"
+                        android:text="Hi!, UserName"
+                        tools:ignore="HardcodedText" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imgUser"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:elevation="2dp"
+                        app:civ_border_width="1dp"
+                        app:civ_border_color="#FFFFFF"
+                        android:src="@drawable/image_not_found_1150x647"
+                        />
+                </RelativeLayout>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="10dp"
+                    android:src="@color/white"
+                    tools:ignore="ImageContrastCheck" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+
+            android:elevation="4dp"
+            android:background="@drawable/round_back_todo_white_sizesmall"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:background="@drawable/round_back_todo_white_sizesmall"
+                android:elevation="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/black_ops_one"
+                android:text="Devices Manager"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="@dimen/_31pxh"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="@dimen/_31pxh"
+                android:background="@color/bluegray_800" />
+            <LinearLayout
+                android:id="@+id/loadingScanQr"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#480C0C0C"
+                android:visibility="gone"
+                >
+                <ProgressBar
+
+                    android:indeterminateTint="@color/white"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/containerItems"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal"
+                android:paddingStart="5dp"
+                tools:ignore="RtlSymmetry">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvListDeviceGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_back_todo_white_sizesmall"
+                    android:elevation="3dp"
+                    android:visibility="gone"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <TextView
+                    android:id="@+id/txtEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/alfa_slab_one"
+                    android:text="You don't own any devices. Please add it by scanning the QR code. "
+                    android:textAlignment="center"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fatAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        android:importantForAccessibility="no"
+        android:src="@drawable/baseline_qr_code_scanner_24"
+        app:layout_constraintBottom_toTopOf="@+id/containerFeatures"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedCornerShape_50pt"
+        />
 </FrameLayout>

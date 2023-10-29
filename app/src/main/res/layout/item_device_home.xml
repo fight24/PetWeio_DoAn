@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_150pxh"
+    android:layout_height="wrap_content"
+
+    android:elevation="4dp"
+    android:background="@color/indigo_50"
+    app:cardCornerRadius="8dp"
+    app:cardUseCompatPadding="true"
+    android:layout_marginTop="10dp"
+
+    >
+    <LinearLayout
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/statusDevice"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@color/red_status"
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/black"
+                />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/idImgBattery"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ba_empty_battery"
+                android:importantForAccessibility="no" />
+        </LinearLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgDeviceHome"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center|top"
+            android:layout_width="@dimen/_77pxh"
+            android:layout_height="@dimen/_78pxh"
+            android:src="@drawable/image_not_found_1150x647"
+            android:elevation="4dp"
+            app:civ_border_width="1dp"
+            app:civ_border_color="@color/white"
+            />
+
+        <TextView
+            android:id="@+id/txtNameDeviceHome"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_24pxh"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/seymour_one"
+            android:gravity="center"
+            android:text="No found"
+            tools:ignore="HardcodedText,TextSizeCheck" />
+        <TextView
+            android:id="@+id/txtTypeDeviceHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/black_ops_one"
+            android:gravity="center"
+            android:text="device?"
+            tools:ignore="HardcodedText,TextSizeCheck" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnNotification"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_back_todo"
+                android:importantForAccessibility="no"
+                android:text="@string/edit"
+                android:fontFamily="@font/black_ops_one"
+                tools:ignore="TouchTargetSizeCheck" />
+        </LinearLayout>
+
+
+    </LinearLayout >
+
+</androidx.cardview.widget.CardView>

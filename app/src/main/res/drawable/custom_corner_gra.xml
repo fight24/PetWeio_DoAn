@@ -1,0 +1,13 @@
+<!-- res/drawable/custom_corner.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:bottomRightRadius="0dp"
+        android:topLeftRadius="40dp"
+        android:topRightRadius="40dp"
+        android:bottomLeftRadius="0dp"/>
+    <gradient
+        android:startColor="@color/colorPrimary"
+        android:endColor="@color/colorAccent"
+        android:gradientRadius="400"
+        android:type="linear" />
+</shape>
