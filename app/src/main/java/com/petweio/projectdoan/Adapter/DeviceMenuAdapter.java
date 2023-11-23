@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.petweio.projectdoan.Model.Device;
 import com.petweio.projectdoan.R;
+import com.petweio.projectdoan.service.BitmapEncode;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -75,7 +76,8 @@ public class DeviceMenuAdapter extends RecyclerView.Adapter<DeviceMenuAdapter.De
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     holder.mImageView.setImageBitmap(bitmap);
-                    deviceMenu.setBitmap(bitmap);
+
+                    deviceMenu.setBitmapToString(BitmapEncode.convertBitmapToString(bitmap));
                 }
 
                 @Override

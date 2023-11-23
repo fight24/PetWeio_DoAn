@@ -3,12 +3,17 @@ package com.petweio.projectdoan.service;
 import com.petweio.projectdoan.Model.ApiResponse;
 import com.petweio.projectdoan.Model.Device;
 import com.petweio.projectdoan.Model.LastProperty;
+import com.petweio.projectdoan.Model.Token;
+import com.petweio.projectdoan.Model.TokenResponse;
 import com.petweio.projectdoan.Model.User;
+import com.petweio.projectdoan.Model.UserSearch;
+import com.petweio.projectdoan.Model.Warning;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -22,7 +27,7 @@ public interface ApiService {
     @PUT("api/user/{id}")
     Call<ApiResponse> updateUserById(@Path("id") Long id, @Body User updatedUser);
     @POST("api/login")
-    Call<ApiResponse> login(@Body User loginRequest);
+    Call<ApiResponse> login(@Body Token loginRequest);
     @POST("api/user")
     Call<ApiResponse> signUp(@Body User newUser);
     @GET("api/users/search/{username}")
@@ -36,4 +41,18 @@ public interface ApiService {
 
     @GET("api/latest_property/{code}")
     Call<LastProperty> getLastPropertyByCode(@Path("code") String code);
+    @GET("api/login-with-token/{token}")
+    Call<TokenResponse> loginWithToken(@Path("token") String token);
+    @DELETE("api/delete-token-by-name/{username}")
+    Call<ApiResponse> deleteTokenByName(@Path("username")String userName);
+    @GET("api/user/search/{username}")
+    Call<List<UserSearch>> searchUser(@Path("username") String userName);
+
+    @PUT("api/device/{device_id}/warning")
+    Call<ApiResponse> updateDeviceWarning(@Path("device_id") int deviceId, @Body Warning isWarning);
+    @PUT("api/device/{device_id}/info")
+    Call<ApiResponse> updateDeviceInfo(@Path("device_id") int deviceId, @Body Device deviceInfo);
+    @PUT("api/device/{device_id}/Distance")
+    Call<ApiResponse> updateDeviceDistance(@Path("device_id") int deviceId, @Body Device deviceInfo);
+
 }

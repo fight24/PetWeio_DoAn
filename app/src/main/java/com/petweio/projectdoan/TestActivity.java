@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 import com.petweio.projectdoan.Notification.MyApplication;
+import com.petweio.projectdoan.splash.SplashActivity;
 
 public class TestActivity extends AppCompatActivity {
     Button buttonTriggerNotification, buttonCancel, buttonUpdate;
@@ -26,7 +27,7 @@ public class TestActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                ((MyApplication)getApplication()).triggerNotificationWithBackStack(MyAppCompatActivity.class,
+                ((MyApplication)getApplication()).triggerNotificationWithBackStack(SplashActivity.class,
                         getString(R.string.NEWS_CHANNEL_ID),
                         "Sample Notification",
                         "This is a sample notification app",

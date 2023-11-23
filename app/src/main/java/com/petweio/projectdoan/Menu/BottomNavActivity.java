@@ -2,6 +2,7 @@ package com.petweio.projectdoan.Menu;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -20,19 +21,24 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.github.ybq.android.spinkit.style.WanderingCubes;
 import com.petweio.projectdoan.Model.Device;
 import com.petweio.projectdoan.MyAppCompatActivity;
+import com.petweio.projectdoan.Notification.MyApplication;
 import com.petweio.projectdoan.R;
 import com.petweio.projectdoan.fragments.AboutFragment;
 import com.petweio.projectdoan.fragments.HomeFragment;
 import com.petweio.projectdoan.fragments.MapFragment;
 import com.petweio.projectdoan.fragments.NotFFoundFragment;
 import com.petweio.projectdoan.fragments.SettingFragment;
-import com.petweio.projectdoan.service.MqttClientManager;
+import com.petweio.projectdoan.service.LocationService;
+import com.petweio.projectdoan.service.MqttViewModel;
+import com.petweio.projectdoan.splash.SplashActivity;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -53,12 +59,11 @@ public class BottomNavActivity extends MyAppCompatActivity {
     public static final int REQUEST_LOCATION_PERMISSION = 1001;
 
     private int selectTab = 1; // 1 - 4 tab, default is 1
+    private static final String BROKER_URL = "tcp://vae01477.emqx.cloud:1883";// "tcp://namcu.ddns.net:1883"
+    private static final String CLIENT_ID = "mqtt_pro_max";
 
-    private static final String BROKER_URL = "tcp://0.tcp.ap.ngrok.io:14468";// "tcp://namcu.ddns.net:1883"
-    private static final String CLIENT_ID = "your_client_id";
-    MqttAndroidClient mqttAndroidClient;
     MqttConnectOptions mqttConnectOptions;
-
+    MqttAndroidClient mqttAndroidClient;
     LinearLayout homeLayout ,petsLayout,settingsLayout,aboutLayout,bottomMenuBar;
 
     ImageView homeIMG , petIMG,settingsIMG,aboutIMG;
@@ -67,7 +72,8 @@ public class BottomNavActivity extends MyAppCompatActivity {
     FrameLayout loading ;
     ProgressBar progressBarCustom;
     List<Device> devices = new ArrayList<>();
-    static MqttClientManager mqttClientManager ;
+    MapFragment mapFragment;
+    MqttViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,11 +94,19 @@ public class BottomNavActivity extends MyAppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG,"onStart");
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(mqttAndroidClient.isConnected()){
+            try {
+                mqttAndroidClient.disconnect();
+            } catch (MqttException e) {
+                throw new RuntimeException(e);
+            }
+        }
         Log.d(TAG,"onDestroy");
     }
 
@@ -153,7 +167,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
          aboutIMG = findViewById(R.id.aboutIMG);
         progressBarCustom.setIndeterminateDrawable(new WanderingCubes());
 
-        setMqtt();
+        setItemMenu();
          new Handler().postDelayed(() ->{
              loading.setVisibility(View.GONE);
             fragmentContainerView.setVisibility(View.VISIBLE);
@@ -163,6 +177,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
 
     private void checkDevice(String name, MapFragment mapFragment,NotFFoundFragment notFFoundFragment) {
         Call<List<Device>> call = apiService.showDevicesFromUser(name);
+
         call.enqueue(new Callback<List<Device>>() {
             @Override
             public void onResponse(@NonNull Call<List<Device>> call, @NonNull Response<List<Device>> response) {
@@ -170,6 +185,21 @@ public class BottomNavActivity extends MyAppCompatActivity {
                     devices = response.body();
                     Log.d(TAG,"Ok show : "+ devices);
                     petLayout(mapFragment,notFFoundFragment,devices);
+                    for(Device device : devices){
+                        if(device.isIs_warning()){
+                            ((MyApplication)getApplication()).triggerNotificationWithBackStack(SplashActivity.class,
+                                    getString(R.string.NEWS_CHANNEL_ID),
+                                    "Notification",
+                                    "You enabled warning in "+device.getNameDevice(),
+                                    "You enabled warning in "+device.getNameDevice(),
+                                    NotificationCompat.PRIORITY_HIGH,
+                                    true,
+                                    getResources().getInteger(R.integer.notificationId),
+                                    PendingIntent.FLAG_UPDATE_CURRENT);
+                            Intent serviceMqtt = new Intent(BottomNavActivity.this, LocationService.class);
+                            startService(serviceMqtt);
+                        }
+                    }
 
                 }
 
@@ -337,18 +367,24 @@ public class BottomNavActivity extends MyAppCompatActivity {
             }
         });
     }
-    private void setMqtt(){
 
-        mqttAndroidClient = new MqttAndroidClient(this.getApplicationContext(),BROKER_URL,CLIENT_ID);
-        mqttConnectOptions = new MqttConnectOptions();
+
+
+    private void setItemMenu(){
+
+        mqttAndroidClient = new MqttAndroidClient(this,BROKER_URL,CLIENT_ID);
+        mqttConnectOptions= new MqttConnectOptions();
         mqttConnectOptions.setCleanSession(true);
         mqttConnectOptions.setAutomaticReconnect(true);
+        mqttConnectOptions.setUserName("nam");
+        mqttConnectOptions.setPassword("nam".toCharArray());
         try {
             IMqttToken token = mqttAndroidClient.connect(mqttConnectOptions);
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "Connected");
+
 //                    mqttSub(mqttAndroidClient,new String[]{"device01,device02,device03"},new int[]{1,1,1});
                 }
 
@@ -362,18 +398,46 @@ public class BottomNavActivity extends MyAppCompatActivity {
         }catch (MqttException e){
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
-        mqttClientManager = new MqttClientManager(mqttAndroidClient);
-        Log.e(TAG, "Android client: " + mqttClientManager);
 
+//        Intent intent = getIntent();
+//
+//        Log.d(TAG, "Intent: "+intent.getStringExtra("username"));
+//
+//        String userName = intent.getStringExtra("username");
+//
+//        SettingFragment settingFragment = SettingFragment.newInstance(userName);
+//        HomeFragment homeFragment = HomeFragment.newInstance(userName);
+//        viewModel = new ViewModelProvider(this).get(MqttViewModel.class);
+//        viewModel.setMqttData(mqttAndroidClient);
+//        mapFragment = MapFragment.newInstance(userName);
+//        AboutFragment aboutFragment = new AboutFragment();
+//        NotFFoundFragment notFFoundFragment = new NotFFoundFragment();
+//        // set home default
+//        getSupportFragmentManager().beginTransaction()
+//                .setReorderingAllowed(true)
+//                .replace(R.id.fragmentContainer, homeFragment,null)
+//                .commit();
+//        runOnUiThread(() ->{
+//            checkDevice(userName,mapFragment,notFFoundFragment);
+//            homeLayout(homeFragment);
+////            petLayout(mapFragment,notFFoundFragment,devices);
+//            settingsLayout(settingFragment);
+//            aboutLayout(aboutFragment);
+//        });
+        functionSetUp();
+    }
+    private void functionSetUp(){
         Intent intent = getIntent();
+
         Log.d(TAG, "Intent: "+intent.getStringExtra("username"));
 
         String userName = intent.getStringExtra("username");
 
-        SettingFragment settingFragment = new SettingFragment();
-//        MapFragment mapFragment = MapFragment.newInstance(mqttClientManager);
+        SettingFragment settingFragment = SettingFragment.newInstance(userName);
         HomeFragment homeFragment = HomeFragment.newInstance(userName);
-        MapFragment mapFragment = MapFragment.newInstance(userName,mqttClientManager);
+        viewModel = new ViewModelProvider(this).get(MqttViewModel.class);
+        viewModel.setMqttData(mqttAndroidClient);
+        mapFragment = MapFragment.newInstance(userName);
         AboutFragment aboutFragment = new AboutFragment();
         NotFFoundFragment notFFoundFragment = new NotFFoundFragment();
         // set home default
@@ -381,14 +445,13 @@ public class BottomNavActivity extends MyAppCompatActivity {
                 .setReorderingAllowed(true)
                 .replace(R.id.fragmentContainer, homeFragment,null)
                 .commit();
-        runOnUiThread(() ->{
-            checkDevice(userName,mapFragment,notFFoundFragment);
+        runOnUiThread(() -> {
+            checkDevice(userName, mapFragment, notFFoundFragment);
             homeLayout(homeFragment);
 //            petLayout(mapFragment,notFFoundFragment,devices);
             settingsLayout(settingFragment);
             aboutLayout(aboutFragment);
         });
-
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -421,4 +484,5 @@ public class BottomNavActivity extends MyAppCompatActivity {
             }
         }
     }
+
 }

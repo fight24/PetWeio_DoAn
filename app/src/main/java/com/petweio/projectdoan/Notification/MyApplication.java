@@ -13,7 +13,7 @@ public class MyApplication extends Application {
     public static final String CHANNEL_ID = "Channel_service_pet_id";
     public static final String CHANNEL_Name = "Channel_service_pet_name";
     MyAppsNotificationManager  myAppsNotificationManager;
-
+    private String fcmToken;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -32,6 +32,7 @@ public class MyApplication extends Application {
                         String token = task.getResult();
                         // Do something with the FCM token
                         Log.i(getString(R.string.DEBUG_TAG), "The result: "+token);
+                        fcmToken = task.getResult();
                     } else {
                         // Handle the error
                         Log.i(getString(R.string.DEBUG_TAG), "Task Failed");
@@ -40,6 +41,10 @@ public class MyApplication extends Application {
                 });
 
 
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
     }
     private void createChannelNotification() {
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,CHANNEL_Name, NotificationManager.IMPORTANCE_DEFAULT);
@@ -51,9 +56,9 @@ public class MyApplication extends Application {
         myAppsNotificationManager.triggerNotification(targetNotificationActivity,channelId,title,text, bigText, priority, autoCancel,notificationId, pendingIntentFlag);
     }
 
-    public void triggerNotification(Class<?> targetNotificationActivity, String channelId, String title, String text, String bigText, int priority, boolean autoCancel, int notificationId){
-        myAppsNotificationManager.triggerNotification(targetNotificationActivity,channelId,title,text, bigText, priority, autoCancel,notificationId);
-    }
+//    public void triggerNotification_test(Class<?> targetNotificationActivity, String channelId, String title, String text, String bigText, int priority, boolean autoCancel, int notificationId){
+//        myAppsNotificationManager.triggerNotification_test(targetNotificationActivity,channelId,title,text, bigText, priority, autoCancel,notificationId);
+//    }
 
     public void triggerNotificationWithBackStack(Class<?> targetNotificationActivity, String channelId, String title, String text, String bigText, int priority, boolean autoCancel, int notificationId, int pendingIntentFlag){
         myAppsNotificationManager.triggerNotificationWithBackStack(targetNotificationActivity,channelId,title,text, bigText, priority, autoCancel,notificationId, pendingIntentFlag);

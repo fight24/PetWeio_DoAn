@@ -8,7 +8,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiManager {
-    private static final String BASE_URL = "https://afbb20be87547d6681091ac89105d65b.serveo.net/";
+    private static final String BASE_URL = "https://dcbc-2405-4802-1d12-a520-d7d9-40d0-a9-84cc.ngrok-free.app/";
     private final ApiService myApiService;
     private static ApiManager instance;
 

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.petweio.projectdoan.Model.Device;
 import com.petweio.projectdoan.R;
+import com.petweio.projectdoan.service.BitmapEncode;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -24,17 +25,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapter.CategoryViewHolder>{
     private List<Device> homeCategoryList;
-    private int battery = 100;
     private static final String URL_AVATAR="https://ui-avatars.com/api/?size=512&background=random&color=fff&name=";
 
     // Các phương thức khác của Adapter
-
-    public int getBattery() {
-        return battery;
-    }
-
-    public void setBattery(int battery) {
-        this.battery = battery;
+    @SuppressLint("NotifyDataSetChanged")
+    public void setBattery(int position, int battery) {
+        if (position >= 0 && position < homeCategoryList.size()) {
+            homeCategoryList.get(position).setBatteryImg(battery);
+            notifyDataSetChanged();
+        }
     }
 
     public HomeCategoryAdapter() {
@@ -48,6 +47,10 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
     public void setData(List<Device> list){
         this.homeCategoryList = list;
         notifyDataSetChanged();
+    }
+
+    public List<Device> getHomeCategoryList() {
+        return homeCategoryList;
     }
 
     public HomeCategoryAdapter(List<Device> homeCategoryList, ButtonOnClickListener mClickListener) {
@@ -79,7 +82,7 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
         }
         holder.txtNameDevice.setText(category.getNameDevice());
 
-        switch (battery){
+        switch (category.getBatteryImg()){
             case 100 : holder.battery.setImageResource(R.drawable.ba_full_battery);
                 break;
             case 75: holder.battery.setImageResource(R.drawable.ba_battery);
@@ -102,7 +105,7 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     holder.DeviceHomeImg.setImageBitmap(bitmap);
-                    category.setBitmap(bitmap);
+                    category.setBitmapToString(BitmapEncode.convertBitmapToString(bitmap));
                 }
 
                 @Override

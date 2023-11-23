@@ -50,8 +50,8 @@ Start !</string>
     <string name="enter_the_password">Enter The Password</string>
     <string name="history">History</string>
     <string name="edit">Edit</string>
-    <string name="NEWS_CHANNEL_ID">news</string>
-    <string name="CHANNEL_NEWS">News</string>
+    <string name="NEWS_CHANNEL_ID">newsProMax</string>
+    <string name="CHANNEL_NEWS">NewsProMax</string>
     <string name="CHANNEL_DESCRIPTION">Get informed with new updates</string>
     <string name="DEBUG_TAG">DebugNotification</string>
 </resources>

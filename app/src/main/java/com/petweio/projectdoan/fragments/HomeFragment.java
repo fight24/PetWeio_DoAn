@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,11 +35,19 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import com.petweio.projectdoan.Adapter.HomeCategoryAdapter;
 import com.petweio.projectdoan.Model.ApiResponse;
 import com.petweio.projectdoan.Model.Device;
+import com.petweio.projectdoan.Model.LastProperty;
 import com.petweio.projectdoan.R;
 import com.petweio.projectdoan.api.ApiManager;
 import com.petweio.projectdoan.service.ApiService;
+import com.petweio.projectdoan.service.MqttViewModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.List;
 import java.util.Objects;
@@ -65,11 +74,13 @@ public class HomeFragment extends Fragment {
     private CircleImageView imgUser;
     private TextView txtEmpty;
     private LinearLayout loadingScanQr,containerItems;
-
+    String[] arrayTopic;
     private ActivityResultLauncher<String> requestPermissionLauncher ;
     private ActivityResultLauncher<ScanOptions> qrCodeLauncher ;
-
+    List<Device> deviceList;
     ApiService apiService;
+    MqttViewModel viewModel;
+    MqttAndroidClient mqttAndroidClient;
     private void setResult(String contents){
         Log.d(TAG,"setResult: "+contents);
         addDeviceToUserName(userName,contents);
@@ -132,6 +143,8 @@ public class HomeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         init(rootView);
         Log.d(TAG, "onCreateView");
+        viewModel = new ViewModelProvider(requireActivity()).get(MqttViewModel.class);
+        mqttAndroidClient = viewModel.getMqttData().getValue();
         return rootView;
     }
     @SuppressLint("SetTextI18n")
@@ -154,12 +167,11 @@ public class HomeFragment extends Fragment {
         Bundle args = this.getArguments();
         if (args != null) {
             userName = args.getString(ARG_PARAM_USER_NAME);
+            assert userName != null;
+            txtUserName.setText("Hi!,"+upCaseFirstWord(userName));
+            setAvatar(userName,imgUser);
         }
-        if(userName == null) {
-            userName = "Tester";
-        }
-        txtUserName.setText("Hi!,"+upCaseFirstWord(userName));
-        setAvatar(userName,imgUser);
+
         loadingItem();
     }
     private void showDevice(String name){
@@ -169,10 +181,26 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<List<Device>> call, @NonNull Response<List<Device>> response) {
              if(response.isSuccessful()){
-                 List<Device> deviceList = response.body();
+                 deviceList = response.body();
+                 assert response.body() != null;
                  Log.d(TAG,"Ok show : "+response.body().toString());
                  if(deviceList != null) {
                      addDeviceFromQRCode(deviceList);
+                         int[] qos = new int[deviceList.size()];
+                     arrayTopic = new String[deviceList.size()];
+                     int i = 0;
+                     for (Device device : deviceList) {
+                         arrayTopic[i] = "devices/" + device.getCodeDevice();
+                         setLastPointDevice(device.getCodeDevice());
+                         qos[i] = 0;
+                         i++;
+                     }
+                         try {
+                             mqttAndroidClient.subscribe(arrayTopic,qos);
+
+                         } catch (MqttException e) {
+                             throw new RuntimeException(e);
+                         }
                  }
              }
 
@@ -184,26 +212,52 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-    private void setAvatar(String name,CircleImageView image){
-        requireActivity().runOnUiThread(()->{
-            Picasso.get().load(URL_AVATAR+name).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    image.setImageBitmap(bitmap);
+    private void setLastPointDevice(String code) {
+        Call<LastProperty> call = apiService.getLastPropertyByCode(code);
+        call.enqueue(new Callback<LastProperty>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(@NonNull Call<LastProperty> call, @NonNull Response<LastProperty> response) {
+                if (response.isSuccessful()) {
+                    LastProperty lastProperty = response.body();
+                    if (lastProperty != null) {
+                        String msg = lastProperty.getLatest_property().getMessage();
+                        for(int i =0;i<deviceList.size();i++){
+                            if(("devices/"+deviceList.get(i).getCodeDevice()).equals("devices/"+lastProperty.getDevice_code())){
+                                homeCategoryAdapter.setBattery(i,updateBat(msg));
+                                Objects.requireNonNull(rvListDeviceGrid.getAdapter()).notifyDataSetChanged();
+                            }
+                        }
+                    }
+
                 }
+            }
 
-                @Override
-                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                    Log.e(TAG,"avatar failed: "+e.getMessage());
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            });
+            @Override
+            public void onFailure(@NonNull Call<LastProperty> call, @NonNull Throwable t) {
+                Log.e(TAG, "error get Last Known Location of device"+t);
+            }
         });
+
+    }
+    private void setAvatar(String name,CircleImageView image){
+        requireActivity().runOnUiThread(()-> Picasso.get().load(URL_AVATAR+name).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                image.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                Log.e(TAG,"avatar failed: "+e.getMessage());
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        }));
     }
     private void addDeviceToUserName(String name,String code) {
         Call<ApiResponse> call = apiService.addDeviceToUserByUserName(name,new Device(code));
@@ -239,6 +293,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated");
+
         fatAdd.setOnClickListener(v-> {
             checkPermissionAndActivity(requireContext());
             Log.d(TAG,"on click ok");
@@ -255,8 +310,51 @@ public class HomeFragment extends Fragment {
 
         });
 
-    }
+        mqttAndroidClient.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                Log.e(TAG,"Connection lost"+cause);
+            }
 
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                String msg = new String(message.getPayload());
+                Log.e(TAG,"msg"+msg);
+                for(int i =0;i<deviceList.size();i++){
+                    if(("devices/"+deviceList.get(i).getCodeDevice()).equals(topic)){
+                        homeCategoryAdapter.setBattery(i,updateBat(msg));
+                        Objects.requireNonNull(rvListDeviceGrid.getAdapter()).notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+
+    }
+    @NonNull
+    private int updateBat(String destinationInfo) {
+        // Xử lý và cập nhật điểm đích trên bản đồ ở đây
+        destinationInfo = destinationInfo.replaceAll(" ", "").replace("[", "").replace("]", "");
+        String[] destinationString = destinationInfo.split(",");;
+        int index = Integer.parseInt(destinationString[2]);
+        if(index<=100 && index>75){
+            return 100;
+        }else if(index<=75 && index > 50){
+            return 75;
+        }else if(index<=50 && index > 25){
+            return 50;
+        }else if(index<=25 && index>0){
+            return 25;
+        }else{
+            return 0;
+        }
+
+    }
     private void checkPermissionAndActivity(Context context) {
         if(ContextCompat.checkSelfPermission(
                 context,
@@ -274,6 +372,9 @@ public class HomeFragment extends Fragment {
     public void addDeviceFromQRCode(List<Device> list) {
 //            devices.add(new DeViceMenuV2(R.color.green_status, R.drawable.ba_battery, R.drawable.images, "Devices01", "None"));
             homeCategoryAdapter.setData(list);
+            for(int i = 0;i<list.size();i++) {
+                homeCategoryAdapter.setBattery(i,0);
+            }
             Objects.requireNonNull(rvListDeviceGrid.getAdapter()).notifyDataSetChanged();
             checkDevice(list);
 
@@ -344,5 +445,12 @@ public class HomeFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        if(mqttAndroidClient.isConnected() && mqttAndroidClient != null){
+            try {
+                mqttAndroidClient.unsubscribe(arrayTopic);
+            } catch (MqttException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

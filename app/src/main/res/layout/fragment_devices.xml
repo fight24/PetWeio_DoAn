@@ -111,6 +111,7 @@
      <RelativeLayout
          android:layout_marginStart="70dp"
          android:layout_marginTop="7dp"
+
          android:layout_width="wrap_content"
          android:layout_height="wrap_content">
          <at.markushi.ui.CircleButton
@@ -124,30 +125,26 @@
              tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
      </RelativeLayout>
   </LinearLayout>
-<LinearLayout
+<FrameLayout
+
     android:layout_centerHorizontal="true"
     android:layout_marginTop="50dp"
     android:id="@+id/viewLineCharts"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:layout_below="@+id/itemLayout"
     android:orientation="vertical" >
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/lineChartBattery"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="400dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="10dp"
+        />
 
-        />
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/lineChartTimeAction"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-</LinearLayout>
+
+</FrameLayout>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -225,12 +222,13 @@
                             android:layout_toEndOf="@id/txtNmDeviceEdit"
                             android:autofillHints="name"
                             android:fontFamily="@font/black_ops_one"
-                            android:hint="Edit Name of the device"
+                            android:hint=" The name from 5 to 9 characters"
                             android:textAlignment="center"
                             android:textColor="#283593"
                             android:textColorHint="#83495A61"
                             android:textSize="13sp"
                             tools:ignore="HardcodedText,TextFields,TouchTargetSizeCheck,VisualLintTextFieldSize" />
+
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_marginStart="10dp"
@@ -258,7 +256,7 @@
                             android:layout_toEndOf="@id/txtTypeDeviceEdit"
                             android:autofillHints="name"
                             android:fontFamily="@font/black_ops_one"
-                            android:hint="Edit Type of the device"
+                            android:hint="The type from 3 to 5 characters"
                             android:textAlignment="center"
                             android:textColor="#283593"
                             android:textColorHint="#83495A61"
@@ -350,6 +348,7 @@
 
 
                     <RelativeLayout
+                        android:id="@+id/showText"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
@@ -366,6 +365,22 @@
                             android:textColor="#283593"
                             android:textSize="20sp"
                             tools:ignore="HardcodedText" />
+                        <EditText
+                            android:id="@+id/edtDistance"
+                            android:visibility="visible"
+                            android:layout_width="155dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tvWarning"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="20dp"
+                            android:fontFamily="@font/alfa_slab_one"
+                            android:hint="Enter distance (m) :"
+                            android:inputType="numberDecimal"
+                            android:minHeight="48dp"
+                            android:textColor="#283593"
+                            android:textColorHint="#112260"
+                            android:textSize="15sp"
+                            tools:ignore="Autofill,HardcodedText,VisualLintTextFieldSize" />
 
                     </RelativeLayout>
 

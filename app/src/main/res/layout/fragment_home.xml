@@ -21,7 +21,9 @@
             android:orientation="horizontal">
             <RelativeLayout
                 android:background="@drawable/round_back_todo"
-                android:layout_margin="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="35dp"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 tools:ignore="UselessParent">

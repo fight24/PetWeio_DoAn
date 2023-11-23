@@ -42,6 +42,10 @@ public class HomeCategory {
         this.typeShow = type;
     }
 
+    public HomeCategory(int batteryImg) {
+        this.batteryImg = batteryImg;
+    }
+
     public int getStatusImg() {
         return statusImg;
     }

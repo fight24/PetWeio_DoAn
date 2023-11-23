@@ -17,8 +17,9 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.petweio.projectdoan.Menu.BottomNavActivity;
 import com.petweio.projectdoan.Model.ApiResponse;
-import com.petweio.projectdoan.Model.User;
+import com.petweio.projectdoan.Model.Token;
 import com.petweio.projectdoan.MyAppCompatActivity;
+import com.petweio.projectdoan.Notification.MyApplication;
 import com.petweio.projectdoan.R;
 
 import retrofit2.Call;
@@ -71,7 +72,7 @@ public class LoginActivity extends MyAppCompatActivity {
                     Toast.makeText(this, "Please enter your complete information", Toast.LENGTH_SHORT).show();
                 } else {
                     // Thực hiện đăng nhập hoặc xử lý dữ liệu
-                    login(username, password);
+                    login(username, password,((MyApplication) getApplication()).getFcmToken());
                 }
 
             });
@@ -88,9 +89,9 @@ public class LoginActivity extends MyAppCompatActivity {
 
 
     }
-    public void login(String username, String password) {
+    public void login(String username, String password,String tokenValue) {
         // Gọi yêu cầu đăng nhập bằng Retrofit
-        Call<ApiResponse> call = super.apiService.login(new User(username, password));
+        Call<ApiResponse> call = super.apiService.login(new Token(username, password,tokenValue));
         Log.d(TAG, "Login : " + call);
         call.enqueue(new Callback<ApiResponse>() {
             @Override

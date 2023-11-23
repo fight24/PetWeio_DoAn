@@ -1,7 +1,5 @@
 package com.petweio.projectdoan.Model;
 
-import android.graphics.Bitmap;
-
 import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -24,14 +22,28 @@ public class Device extends DeViceMenuV2 implements Serializable {
     private String imageName;
     @SerializedName("is_status")
     private boolean is_status;
-    private Bitmap bitmap;
+    @SerializedName("distance")
+    private float distance;
+    private String bitmapToString;
 
-    public Bitmap getBitmap() {
-        return bitmap;
+    public Device(float distance) {
+        this.distance = distance;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public String getBitmapToString() {
+        return bitmapToString;
+    }
+
+    public void setBitmapToString(String bitmapToString) {
+        this.bitmapToString = bitmapToString;
     }
 
     public Device(int statusImg, int batteryImg, int imgDevice, String textName, String type, String code) {
@@ -91,10 +103,19 @@ public class Device extends DeViceMenuV2 implements Serializable {
         this.is_status = is_status;
     }
 
+    public Device(int batteryImg) {
+        super(batteryImg);
+    }
+
     public Device(int idDevice, String codeDevice, String nameDevice) {
         this.idDevice = idDevice;
         this.codeDevice = codeDevice;
         this.nameDevice = nameDevice;
+    }
+
+    public Device(String nameDevice, String typeDevice) {
+        this.nameDevice = nameDevice;
+        this.typeDevice = typeDevice;
     }
 
     public String getTypeDevice() {
