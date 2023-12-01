@@ -54,5 +54,6 @@ public interface ApiService {
     Call<ApiResponse> updateDeviceInfo(@Path("device_id") int deviceId, @Body Device deviceInfo);
     @PUT("api/device/{device_id}/Distance")
     Call<ApiResponse> updateDeviceDistance(@Path("device_id") int deviceId, @Body Device deviceInfo);
-
+    @DELETE("api/remove-device-from-user/{username}/{deviceCode}")
+    Call<ApiResponse> removeDeviceFromUser(@Path("username") String username,@Path("deviceCode") String deviceCode);
 }

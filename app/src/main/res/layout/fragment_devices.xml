@@ -28,6 +28,18 @@
             android:importantForAccessibility="no"
             android:src="@drawable/arrow_back"
             tools:ignore="TouchTargetSizeCheck,ImageContrastCheck" />
+
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:background="@color/trans"
+            android:importantForAccessibility="no"
+            android:src="@drawable/baseline_delete_24"
+            tools:ignore="TouchTargetSizeCheck,ImageContrastCheck" />
     <RelativeLayout
         android:id="@+id/imagelayout"
         android:paddingTop="3dp"
@@ -141,7 +153,7 @@
         android:layout_height="400dp"
         android:layout_gravity="center"
         android:layout_marginEnd="10dp"
-        />
+        tools:ignore="VisualLintBounds" />
 
 
 </FrameLayout>
@@ -420,6 +432,111 @@
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
+                <LinearLayout
+                    android:visibility="invisible"
+                    android:background="#68000000"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:id="@+id/linearLayoutDelete"
+                    >
+                    <LinearLayout
+                        android:background="@drawable/round_back_todo_pri_sizesmall"
+                        android:padding="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="vertical" >
+                        <RelativeLayout
+                            android:id="@+id/itemDelete"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_centerVertical="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:fontFamily="@font/alfa_slab_one"
+                                android:text="WARNING"
+                                android:textAlignment="center"
+                                android:textColor="#283593"
+                                android:textSize="35sp"
+                                tools:ignore="HardcodedText,TextContrastCheck" />
+                        </RelativeLayout>
+
+                        <View
+
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="@dimen/_10pxh"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="@dimen/_10pxh"
+                            android:background="@color/white" />
+
+
+                        <RelativeLayout
+                            android:id="@+id/showTextDelete"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tvDelete"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/alfa_slab_one"
+                                android:text="Do you want to remove this device?"
+                                android:textAlignment="center"
+                                android:textColor="#283593"
+                                android:textSize="20sp"
+                                tools:ignore="HardcodedText" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnDeleteCancel"
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_gravity="center"
+                                android:background="@drawable/round_back_todo_white"
+                                android:elevation="4dp"
+                                android:fontFamily="@font/seymour_one"
+                                android:text="No"
+                                android:textColor="#0277BD"
+                                tools:ignore="HardcodedText,DuplicateSpeakableTextCheck,TextSizeCheck" />
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnDeleteOk"
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/round_back_todo_white"
+                                android:fontFamily="@font/seymour_one"
+                                android:gravity="center"
+                                android:layout_marginBottom="10dp"
+                                android:text="Yes"
+                                android:layout_alignParentEnd="true"
+                                android:elevation="4dp"
+                                android:textColor="#0277BD"
+                                tools:ignore="HardcodedText" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
         </FrameLayout>
 
 

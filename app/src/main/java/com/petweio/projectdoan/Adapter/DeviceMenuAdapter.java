@@ -71,7 +71,7 @@ public class DeviceMenuAdapter extends RecyclerView.Adapter<DeviceMenuAdapter.De
         if(deviceMenu == null){
             return;
         }
-        if(deviceMenu.getImageName().equals("None")){
+        if(deviceMenu.getImageName() == null){
             Picasso.get().load(URL_AVATAR+deviceMenu.getNameDevice()+"+"+deviceMenu.getCodeDevice().split("")[deviceMenu.getCodeDevice().length()]).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {

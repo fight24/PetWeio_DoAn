@@ -35,7 +35,13 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
             notifyDataSetChanged();
         }
     }
-
+    @SuppressLint("NotifyDataSetChanged")
+    public void changeStatus(int position, boolean status) {
+        if (position >= 0 && position < homeCategoryList.size()) {
+            homeCategoryList.get(position).setIs_status(status);
+            notifyDataSetChanged();
+        }
+    }
     public HomeCategoryAdapter() {
     }
 
@@ -100,7 +106,7 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
         }else{
             holder.statusImg.setImageResource(R.color.red_status);
         }
-        if(category.getImageName().equals("None")){
+        if(category.getImageName() == null){
             Picasso.get().load(URL_AVATAR+category.getNameDevice()+"+"+category.getCodeDevice().split("")[category.getCodeDevice().length()]).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -121,7 +127,12 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
        }else{
             holder.DeviceHomeImg.setImageResource(R.drawable.image_not_found_1150x647);
         }
-
+        holder.imgNotification.setImageResource(R.drawable.notifications_color);
+        if(category.isIs_warning()){
+            holder.imgNotification.setVisibility(View.VISIBLE);
+        }else{
+            holder.imgNotification.setVisibility(View.INVISIBLE);
+        }
         holder.txtType.setText(category.getTypeDevice());
         holder.btnNotification.setText("Edit");
         holder.btnNotification.setOnClickListener(v-> mClickListener.onClick(category,position));
@@ -140,6 +151,8 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
 
         private final CircleImageView statusImg;
         private final ImageView battery;
+        private final ImageView imgNotification;
+
         private final CircleImageView DeviceHomeImg;
         private final AppCompatButton btnNotification;
         private final TextView txtNameDevice;
@@ -153,6 +166,8 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
             txtNameDevice = itemView.findViewById(R.id.txtNameDeviceHome);
             btnNotification = itemView.findViewById(R.id.btnNotification);
             txtType = itemView.findViewById(R.id.txtTypeDeviceHome);
+            imgNotification = itemView.findViewById(R.id.idImgNotification);
+
         }
 
 

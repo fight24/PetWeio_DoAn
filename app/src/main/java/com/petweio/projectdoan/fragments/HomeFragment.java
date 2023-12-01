@@ -178,6 +178,7 @@ public class HomeFragment extends Fragment {
         Call<List<Device>> call = apiService.showDevicesFromUser(name);
      
         call.enqueue(new Callback<List<Device>>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<List<Device>> call, @NonNull Response<List<Device>> response) {
              if(response.isSuccessful()){
@@ -191,6 +192,9 @@ public class HomeFragment extends Fragment {
                      int i = 0;
                      for (Device device : deviceList) {
                          arrayTopic[i] = "devices/" + device.getCodeDevice();
+                         Log.d(TAG, "device " + device.isIs_status() );
+                         homeCategoryAdapter.changeStatus(i,device.isIs_status());
+                         Objects.requireNonNull(rvListDeviceGrid.getAdapter()).notifyDataSetChanged();
                          setLastPointDevice(device.getCodeDevice());
                          qos[i] = 0;
                          i++;
@@ -213,6 +217,7 @@ public class HomeFragment extends Fragment {
         });
     }
     private void setLastPointDevice(String code) {
+
         Call<LastProperty> call = apiService.getLastPropertyByCode(code);
         call.enqueue(new Callback<LastProperty>() {
             @SuppressLint("NotifyDataSetChanged")
@@ -301,7 +306,7 @@ public class HomeFragment extends Fragment {
 
         homeCategoryAdapter.setClickListener( (device, position) -> {
             Log.d(TAG, "On device " + device);
-                DeviceFragment deviceFragment = DeviceFragment.newInstance(device);
+                DeviceFragment deviceFragment = DeviceFragment.newInstance(device,userName);
                 requireActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, deviceFragment)
                         .addToBackStack(null) // Để có thể quay lại Fragment A
@@ -324,6 +329,10 @@ public class HomeFragment extends Fragment {
                 for(int i =0;i<deviceList.size();i++){
                     if(("devices/"+deviceList.get(i).getCodeDevice()).equals(topic)){
                         homeCategoryAdapter.setBattery(i,updateBat(msg));
+                        homeCategoryAdapter.changeStatus(i,true);
+                        Objects.requireNonNull(rvListDeviceGrid.getAdapter()).notifyDataSetChanged();
+                    }else{
+                        homeCategoryAdapter.changeStatus(i,false);
                         Objects.requireNonNull(rvListDeviceGrid.getAdapter()).notifyDataSetChanged();
                     }
                 }

@@ -76,19 +76,19 @@ public class DeviceFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "name_type";
+    private static final String ARG_PARAM1 = "username";
     private static final String ARG_PARAM2 = "Device";
     private static final String TAG = "DeviceFragment";
-    private String nameValue,typeValue;
+    private String nameValue,typeValue,userName;
     private Device device;
-    private ImageButton btnBack;
+    private ImageButton btnBack,btnDelete;
     private TextView txtNameType,tvWarning;
     private CircleImageView imageDevice;
     private CircleButton btnNotify,btnHistory,btnEdit;
     private LineChart lineChartBattery,lineChartTimeAction;
-    private LinearLayout linearLayoutEdit,linearLayoutNotification;
+    private LinearLayout linearLayoutEdit,linearLayoutNotification,linearLayoutDelete;
     FrameLayout containerChart;
-    private AppCompatButton btnNoTiCancel,btnNoTiOk,btnEditCancel,btnEditOk;
+    private AppCompatButton btnNoTiCancel,btnNoTiOk,btnEditCancel,btnEditOk,btnDeleteOk,btnDeleteCancel;
     private EditText edtNmDeviceEdit,edtTypeDeviceEdit,edtDistance;
     private ApiService apiService;
     boolean checkWarning;
@@ -116,10 +116,11 @@ public class DeviceFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     @NonNull
-    public static DeviceFragment newInstance(Device device) {
+    public static DeviceFragment newInstance(Device device,String userName) {
         DeviceFragment fragment = new DeviceFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM2, device);
+        args.putString(ARG_PARAM1, userName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -151,6 +152,7 @@ public class DeviceFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     private void init(@NonNull View root) {
         btnBack = root.findViewById(R.id.btnBack);
+        btnDelete = root.findViewById(R.id.btnDelete);
         txtNameType = root.findViewById(R.id.deviceName_type);
         imageDevice = root.findViewById(R.id.img_device);
         btnNotify = root.findViewById(R.id.NotifyButton);
@@ -158,13 +160,17 @@ public class DeviceFragment extends Fragment {
         btnEdit = root.findViewById(R.id.EditButton);
         tvWarning = root.findViewById(R.id.tvWarning);
         linearLayoutEdit = root.findViewById(R.id.linearLayoutEdit);
+        linearLayoutDelete = root.findViewById(R.id.linearLayoutDelete);
         linearLayoutNotification = root.findViewById(R.id.linearLayoutNotification);
         containerChart = root.findViewById(R.id.viewLineCharts);
+
         btnEditOk = root.findViewById(R.id.btnEditOk);
         btnNoTiOk = root.findViewById(R.id.btnNoTiOk);
+        btnDeleteOk = root.findViewById(R.id.btnDeleteOk);
 
         btnEditCancel = root.findViewById(R.id.btnEditCancel);
         btnNoTiCancel = root.findViewById(R.id.btnNoTiCancel);
+        btnDeleteCancel = root.findViewById(R.id.btnDeleteCancel);
 
         edtNmDeviceEdit = root.findViewById(R.id.edtNmDeviceEdit);
         edtTypeDeviceEdit = root.findViewById(R.id.edtTypeDeviceEdit);
@@ -173,6 +179,7 @@ public class DeviceFragment extends Fragment {
         apiService = ApiManager.getInstance().getMyApiService();
         if (getArguments() != null) {
             device = (Device) getArguments().getSerializable(ARG_PARAM2);
+            userName = getArguments().getString(ARG_PARAM1);
             try {
                 assert device != null;
                 txtNameType.setText(device.getNameDevice()+" - "+device.getTypeDevice());
@@ -181,6 +188,7 @@ public class DeviceFragment extends Fragment {
                 Log.e(TAG, Objects.requireNonNull(e.getMessage()));
             }
             Log.e(TAG, "is_warning: "+device.isIs_warning());
+            Log.e(TAG, "name: "+device.getNameDevice());
             checkWarning = device.isIs_warning();
         }
         try {
@@ -384,6 +392,29 @@ public class DeviceFragment extends Fragment {
             }
         });
         btnBack.setOnClickListener(v-> requireActivity().getSupportFragmentManager().popBackStack());
+        btnDelete.setOnClickListener(v->{
+            linearLayoutDelete.setVisibility(View.VISIBLE);
+            btnDeleteCancel.setOnClickListener(v1-> linearLayoutDelete.setVisibility(View.INVISIBLE));
+            btnDeleteOk.setOnClickListener(v2->{
+                Call<ApiResponse> callRM = apiService.removeDeviceFromUser(userName,device.getCodeDevice());
+                callRM.enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if(response.isSuccessful()){
+                            linearLayoutDelete.setVisibility(View.INVISIBLE);
+                            requireActivity().getSupportFragmentManager().popBackStack();
+                        }
+                        Toast.makeText(requireContext(),device.getNameDevice() + " Deleted", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Toast.makeText(requireContext(),device.getNameDevice() + " isn't Deleted", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+
+        });
     }
     String upCaseFirstWord(@NonNull String name){
         return name.substring(0,1).toUpperCase() + name.substring(1);

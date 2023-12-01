@@ -59,7 +59,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
     public static final int REQUEST_LOCATION_PERMISSION = 1001;
 
     private int selectTab = 1; // 1 - 4 tab, default is 1
-    private static final String BROKER_URL = "tcp://vae01477.emqx.cloud:1883";// "tcp://namcu.ddns.net:1883"
+    private static final String BROKER_URL = "tcp://petweioapp.online:1883";// "tcp://namcu.ddns.net:1883"
     private static final String CLIENT_ID = "mqtt_pro_max";
 
     MqttConnectOptions mqttConnectOptions;
@@ -376,8 +376,8 @@ public class BottomNavActivity extends MyAppCompatActivity {
         mqttConnectOptions= new MqttConnectOptions();
         mqttConnectOptions.setCleanSession(true);
         mqttConnectOptions.setAutomaticReconnect(true);
-        mqttConnectOptions.setUserName("nam");
-        mqttConnectOptions.setPassword("nam".toCharArray());
+        mqttConnectOptions.setUserName("admin24");
+        mqttConnectOptions.setPassword("admin24".toCharArray());
         try {
             IMqttToken token = mqttAndroidClient.connect(mqttConnectOptions);
             token.setActionCallback(new IMqttActionListener() {
@@ -425,6 +425,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
 //            aboutLayout(aboutFragment);
 //        });
         functionSetUp();
+
     }
     private void functionSetUp(){
         Intent intent = getIntent();

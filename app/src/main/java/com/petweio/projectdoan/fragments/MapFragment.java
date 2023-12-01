@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -40,6 +41,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -149,7 +151,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
     private DirectionsRoute walkingRoute;
 
     FloatingActionButton fat;
-    List<Symbol> symbolsToDelete = new ArrayList<>(),symbolsUpdate = new ArrayList<>();
+    List<Symbol> symbolsToDelete = new ArrayList<>(), symbolsUpdate = new ArrayList<>();
     LinearLayoutManager linearLayoutHorizontalManager, linearLayoutVerticalManager;
     ImageButton imgBtnClose, btnMenu;
     AppCompatButton btnFind;
@@ -205,14 +207,16 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
         fragment.setArguments(args);
         return fragment;
     }
+
     @NonNull
     public static MapFragment newInstanceMqtt(String encodeMqtt) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_MQTT_CLIENT_JSON,encodeMqtt);
+        args.putString(ARG_MQTT_CLIENT_JSON, encodeMqtt);
         fragment.setArguments(args);
         return fragment;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -240,7 +244,6 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
         Log.d(TAG, "onCreateView");
         return rootView;
     }
-
 
 
     private void initView(@NonNull View rootView, Bundle savedInstanceState) {
@@ -274,9 +277,8 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
         loading = rootView.findViewById(R.id.loading);
         loadingProgressBar = rootView.findViewById(R.id.loadingProgressBar);
         loadingProgressBar.setIndeterminateDrawable(new FoldingCube());
+
         mapView.onCreate(savedInstanceState);
-
-
 
 
     }
@@ -288,8 +290,8 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
         setRecyclerView();
         Log.d(TAG, "onViewCreated");
 
-        if(mqttAndroidClient != null){
-            Log.e(TAG,"mqttAndroidClient is running");
+        if (mqttAndroidClient != null) {
+            Log.e(TAG, "mqttAndroidClient is running");
             mqttAndroidClient.setCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable cause) {
@@ -306,18 +308,18 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
                     origin = Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
                             , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
                     Log.d(TAG, "origin: " + origin);
-                        for(int i = 0;i<deviceList.size();i++){
-                            if(("devices/"+deviceList.get(i).getCodeDevice()).equals(topic)){
-                                Log.e(TAG, "symbolsUpdate 1: " + symbolsUpdate);
-                                updateSymbolsLocation(symbolsUpdate.get(i),new LatLng(updateDestinationOnMap(msg).latitude(),updateDestinationOnMap(msg).longitude()));
+                    for (int i = 0; i < deviceList.size(); i++) {
+                        if (("devices/" + deviceList.get(i).getCodeDevice()).equals(topic)) {
+                            Log.e(TAG, "symbolsUpdate 1: " + symbolsUpdate);
+                            updateSymbolsLocation(symbolsUpdate.get(i), new LatLng(updateDestinationOnMap(msg).latitude(), updateDestinationOnMap(msg).longitude()));
 //                            symbolsUpdate.get(i).setLatLng(new LatLng(updateDestinationOnMap(msg).latitude(),updateDestinationOnMap(msg).longitude()));
 
-                                Log.e(TAG, "symbolsUpdate 2: " + symbolsUpdate);
-                            }
+                            Log.e(TAG, "symbolsUpdate 2: " + symbolsUpdate);
                         }
+                    }
                     deviceLocationUpdate.put(topic, updateDestinationOnMap(msg));
-                    Log.d(TAG, "key : "+topic +"Value: "+ deviceLocationUpdate.get(topic));
-                     updateValuesFeature(topic, origin, deviceLocationUpdate.get(topic),deviceLocationUpdate.get(topic+"-origin"));
+                    Log.d(TAG, "key : " + topic + "Value: " + deviceLocationUpdate.get(topic));
+                    updateValuesFeature(topic, origin, deviceLocationUpdate.get(topic), deviceLocationUpdate.get(topic + "-origin"));
 
 //                     getSingleRoute(deviceLocationUpdate.get(topic+"-origin"),deviceLocationUpdate.get(topic));
 
@@ -344,39 +346,37 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
 
                 }
             });
-        }else{
+        } else {
             Log.e(TAG, "Mqtt Client null ");
         }
 
         mapView.getMapAsync(this);
-        new Handler().postDelayed(() -> {
-            loading.setVisibility(View.GONE);
-            containerMap.setVisibility(View.VISIBLE);
-        }, 5000);
+
     }
-private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
-            ValueAnimator animator = ValueAnimator.ofObject(new LatLngEvaluator(), s.getLatLng(), updateLocation);
-            animator.setDuration(5000);
-            animator.addUpdateListener(animation -> {
-                LatLng animatedLatLng = (LatLng) animation.getAnimatedValue();
-                s.setLatLng(animatedLatLng);
-                symbolManager.update(s);
-                Log.d(TAG, "add Update Listener");
-            });
 
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    // Animation completed, update the symbol's final position
+    private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation) {
+        ValueAnimator animator = ValueAnimator.ofObject(new LatLngEvaluator(), s.getLatLng(), updateLocation);
+        animator.setDuration(5000);
+        animator.addUpdateListener(animation -> {
+            LatLng animatedLatLng = (LatLng) animation.getAnimatedValue();
+            s.setLatLng(animatedLatLng);
+            symbolManager.update(s);
+            Log.d(TAG, "add Update Listener");
+        });
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Animation completed, update the symbol's final position
 //                    symbolManager.update(s);
-                    s.setLatLng(updateLocation);
-                    symbolManager.update(s);
+                s.setLatLng(updateLocation);
+                symbolManager.update(s);
 
-                    Log.d(TAG, "add Listener");
-                }
-            });
-            animator.start();
-}
+                Log.d(TAG, "add Listener");
+            }
+        });
+        animator.start();
+    }
 
 
     // Gọi hàm này để bắt đầu quá trình xóa
@@ -402,10 +402,9 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
         Log.d(TAG, "text: " + txtTitleDevice);
         listDevice.setAdapter(deviceMenuAdapter);
         listDevice.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        showDevice(userName);
+//        showDevice(userName);
 
     }
-
 
 
     private void showDevice(String name) {
@@ -432,6 +431,10 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
                             throw new RuntimeException(e);
                         }
                         addAndChangeDevice(deviceList);
+                        new Handler().postDelayed(() -> {
+                            loading.setVisibility(View.GONE);
+                            containerMap.setVisibility(View.VISIBLE);
+                        }, 5000);
 
                     }
                 }
@@ -456,19 +459,20 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
                         lastProperty = response.body();
                         Log.d(TAG, "`response last location" + lastProperty.toString());
 //                        updateSymbolDestination(ICON_DESTINATION_DEVICE_V1_ID, destinationOrigin, symbolDefault);
-                        deviceLocationUpdate.put("devices/" + code+"-origin", updateDestinationOnMap(lastProperty.getLatest_property().getMessage()));
+                        deviceLocationUpdate.put("devices/" + code + "-origin", updateDestinationOnMap(lastProperty.getLatest_property().getMessage()));
                         deviceLocationUpdate.put("devices/" + code, updateDestinationOnMap(lastProperty.getLatest_property().getMessage()));
-                        assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
-                        origin = Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
-                                , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
-                        updateValuesFeature("devices/" + code, origin,deviceLocationUpdate.get("devices/" + code), deviceLocationUpdate.get("devices/" + code+"-origin"));
+                        if (mapboxMap.getLocationComponent().getLastKnownLocation() != null){
+                            origin = Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
+                                    , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
+                            updateValuesFeature("devices/" + code, origin, deviceLocationUpdate.get("devices/" + code), deviceLocationUpdate.get("devices/" + code + "-origin"));
+                        }
                         mapboxMap.getStyle(style -> {
-                            if(deviceList.isEmpty()){
+                            if (deviceList.isEmpty()) {
                                 Log.e(TAG, "deviceList is empty");
-                            }else{
-                                for(Device d :deviceList){
-                                    setUpSymbol(d.getNameDevice()+"-Origin",ICON_DESTINATION_DEVICE_V1_ID, Objects.requireNonNull(deviceLocationUpdate.get("devices/" + d.getCodeDevice())));
-                                    symbolsUpdate.add(setUpSymbol(d.getNameDevice(),ICON_DESTINATION_DEVICE_V1_ID, Objects.requireNonNull(deviceLocationUpdate.get("devices/" + d.getCodeDevice()))));
+                            } else {
+                                for (Device d : deviceList) {
+                                    setUpSymbol(d.getNameDevice() + "-Origin", ICON_DESTINATION_DEVICE_V1_ID, Objects.requireNonNull(deviceLocationUpdate.get("devices/" + d.getCodeDevice())));
+                                    symbolsUpdate.add(setUpSymbol(d.getNameDevice(), ICON_DESTINATION_DEVICE_V1_ID, Objects.requireNonNull(deviceLocationUpdate.get("devices/" + d.getCodeDevice()))));
                                 }
                             }
                         });
@@ -481,11 +485,12 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
 
             @Override
             public void onFailure(@NonNull Call<LastProperty> call, @NonNull Throwable t) {
-                Log.e(TAG, "error get Last Known Location of device"+t);
+                Log.e(TAG, "error get Last Known Location of device" + t);
             }
         });
 
     }
+
     private void funSleep(long timeMillis) {
         long currentTimeMillis = System.currentTimeMillis();
         while (true) {
@@ -494,6 +499,7 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
             }
         }
     }
+
     @NonNull
     private String[] getArrayTopic(@NonNull List<Device> devices) {
         String[] arrayTopic = new String[devices.size()];
@@ -513,6 +519,10 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
     @SuppressLint("NotifyDataSetChanged")
     public void addAndChangeDevice(List<Device> list) {
 //            devices.add(new DeViceMenuV2(R.color.green_status, R.drawable.ba_battery, R.drawable.images, "Devices01", "None"));
+        for (Device device : list) {
+            Log.d(TAG, "device"+device.toString());
+        }
+
         deviceMenuAdapter.setData(list);
         Objects.requireNonNull(listDevice.getAdapter()).notifyDataSetChanged();
         btnMenu.setOnClickListener(v -> {
@@ -634,10 +644,10 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void updateValuesFeature(String topic, Point a, Point b,Point c) {
+    private void updateValuesFeature(String topic, Point a, Point b, Point c) {
         distance = TurfMeasurement.distance(a, b, TurfConstants.UNIT_DEFAULT);
-        journey = journey + TurfMeasurement.distance(b,c, TurfConstants.UNIT_DEFAULT);
-        Log.e(TAG,"journey=" + journey);
+        journey = journey + TurfMeasurement.distance(b, c, TurfConstants.UNIT_DEFAULT);
+        Log.e(TAG, "journey=" + journey);
         if (distance < 1) {
             distance = distance * 1000;
             Objects.requireNonNull(deviceFeaturesMap.get(topic)).get(0).setValue(new DecimalFormat("0.00").format(distance) + " m");
@@ -658,146 +668,17 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
         }
 
     }
-//
-//    private void updateSymbolPosition(String deviceId, LatLng newLatLng, String iconImage,Symbol symbolToUpdate) {
-//        Log.d(TAG, "updateSymbolPosition");
-////        Symbol symbolToUpdate = null;
-////        LongSparseArray<Symbol> symbolArray = symbolManager.getAnnotations();
-////        List<Symbol> symbolList = new ArrayList<>();
-////        for (int i = 0; i < symbolArray.size(); i++) {
-////            long key = symbolArray.keyAt(i);
-////            Symbol symbol = symbolArray.get(key);
-////            symbolList.add(symbol);
-////        }
-////
-////// Bây giờ bạn có thể sử dụng symbolList như một danh sách thông thường
-////        for (Symbol symbol : symbolList) {
-////            JsonElement jsonData = symbol.getData();
-////            if (jsonData != null && jsonData.isJsonPrimitive() && jsonData.getAsJsonPrimitive().isString()) {
-////                if (deviceId.equals(jsonData.getAsString())) {
-////                    symbolToUpdate = symbol;
-////                    break;
-////                }
-////            }else{
-////                Log.d(TAG, "jsonData null");
-////            }
-////        }
-//        if (symbolToUpdate != null) {
-//            Log.d(TAG, "Symbol updated"+symbolToUpdate);
-//            symbolManager.delete(symbolToUpdate);
-//            symbolManager.create(new SymbolOptions()
-//                    .withLatLng(newLatLng)
-//                    .withIconImage(iconImage)
-//                    .withTextField(deviceId));//"Device " + deviceId.substring(deviceId.length() - 1)
-//            Log.d(TAG, "Symbol updated"+symbolToUpdate);
-//
-//            JsonReader reader = new JsonReader(new java.io.StringReader(deviceId));
-//            reader.setLenient(true);
-//            JsonElement jsonElement = JsonParser.parseReader(reader);
-//// Sử dụng phương thức setData với đối tượng JsonElement
-//            symbolToUpdate.setData(jsonElement);
-//        }else{
-//            Log.d(TAG, "Symbol updated null");
-//            symbolManager.create(new SymbolOptions()
-//                    .withLatLng(newLatLng)
-//                    .withIconImage(iconImage)
-//                    .withTextField(deviceId));//"Device " + deviceId.substring(deviceId.length() - 1)
-//        }
-//    }
-//
-//    private void animateSymbolMovement(String deviceId,LatLng endPoint, String iconImage) {
-//        Log.d(TAG, "animateSymbolMovement");
-//        Symbol symbolToUpdate = null;
-//        LongSparseArray<Symbol> symbolArray = symbolManager.getAnnotations();
-//        List<Symbol> symbolList = new ArrayList<>();
-//        for (int i = 0; i < symbolArray.size(); i++) {
-//            long key = symbolArray.keyAt(i);
-//            Symbol symbol = symbolArray.get(key);
-//            symbolList.add(symbol);
-//        }
-//
-//// Bây giờ bạn có thể sử dụng symbolList như một danh sách thông thường
-//        for (Symbol symbol : symbolList) {
-//            JsonElement jsonData = symbol.getData();
-//            if (jsonData != null && jsonData.isJsonPrimitive() && jsonData.getAsJsonPrimitive().isString()) {
-//                if (deviceId.equals(jsonData.getAsString())) {
-//                    symbolToUpdate = symbol;
-//                    break;
-//                }
-//            }
-//        }
-//
-//
-//        if (symbolToUpdate != null) {
-//            ValueAnimator animator = ValueAnimator.ofObject(new LatLngEvaluator(), symbolToUpdate.getLatLng(), endPoint);
-////            animator.setDuration(1000);
-//
-//
-//
-////            animator.addUpdateListener(animation -> {
-////                LatLng animatedLatLng = (LatLng) animation.getAnimatedValue();
-////                symbolManager.delete(finalSymbolToUpdate);
-////                // Thêm Symbol mới với vị trí mới
-////                symbolManager.create(new SymbolOptions()
-////                        .withLatLng(animatedLatLng)
-////                        .withIconImage(iconImage));  // Thay "icon-image" bằng tên hình ảnh bạn đang sử dụng
-////            });
-////
-////            animator.addListener(new AnimatorListenerAdapter() {
-////                @Override
-////                public void onAnimationEnd(Animator animation) {
-////                    // Animation completed, update the symbol's final position
-////                    updateSymbolPosition(deviceId, newLatLng, iconImage);
-////                }
-////            });
-////            ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
-//            animator.setDuration(1000);  // Đặt thời gian di chuyển (1 giây trong trường hợp này)
-//            LatLng startPoint = symbolToUpdate.getLatLng();
-//            Symbol finalSymbol = symbolToUpdate;
-//            Symbol finalSymbolToUpdate = symbolToUpdate;
-//            animator.addUpdateListener(animation -> {
-//                float fraction = animation.getAnimatedFraction();
-//                LineString lineString = LineString.fromLngLats(Arrays.asList(
-//                        Point.fromLngLat(startPoint.getLongitude(), startPoint.getLatitude()),
-//                        Point.fromLngLat(endPoint.getLongitude(), endPoint.getLatitude())
-//                ));
-//            animator.addListener(new AnimatorListenerAdapter() {
-//                @Override
-//                public void onAnimationEnd(Animator animation) {
-//                    // Animation completed, update the symbol's final position
-//                    updateSymbolPosition(deviceId, endPoint, iconImage, finalSymbolToUpdate);
-//                    Log.d(TAG, "Animation completed");
-//                }
-//            });
-//// Lấy điểm ở một tỉ lệ cụ thể trên đoạn đường
-//                LatLng animatedLatLng = new LatLng(TurfMeasurement.along(lineString, fraction * distance, TurfConstants.UNIT_KILOMETERS).latitude(), TurfMeasurement.along(lineString, fraction * distance, TurfConstants.UNIT_KILOMETERS).longitude());
-//                // Cập nhật vị trí của biểu tượng theo quãng đường đã đi
-//                finalSymbol.setLatLng(animatedLatLng);
-//                symbolManager.update(finalSymbol);
-//            });
-//
-////            animator.addListener(new AnimatorListenerAdapter() {
-////                @Override
-////                public void onAnimationEnd(Animator animation) {
-////                    // Animation completed, update the symbol's final position
-////                    updateSymbolPosition(deviceId, endPoint, iconImage);
-////                }
-////            });
-//            animator.start();
-//            Log.d(TAG, "Animate start: " );
-//        }else{
-//            Log.e(TAG, "Animate symbolUpdate null: " );
-//        }
-//    }
 
     @Override
     public void onMapReady(@NonNull MapboxMap map) {
         MapFragment.this.mapboxMap = map;
+
         mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/fight242001/clmrq46bn02ag01qx122jgyc2"), style -> {
             setupGesturesListener();
+            showDevice(userName);
             Log.d(TAG, "onMapReady ");
             fat.setOnClickListener(v -> {
-//                checkAndEnableGPS(style);
+                checkAndEnableGPS(style);
                 assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
                 setCamera(Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
                         , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude()));
@@ -1016,7 +897,8 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
         // Use the manager to draw the symbol.
         return symbolManager.create(symbolOptions);
     }
-    private Symbol setUpSymbol(String nameId,@NonNull String iconId, @NonNull Point p){
+
+    private Symbol setUpSymbol(String nameId, @NonNull String iconId, @NonNull Point p) {
         // Tạo một SymbolOptions cho biểu tượng
         String[] fonts = new String[]{"Inter Black"};
         SymbolOptions symbolOptions = new SymbolOptions()
@@ -1054,7 +936,7 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
         // Xử lý và cập nhật điểm đích trên bản đồ ở đây
         destinationInfo = destinationInfo.replaceAll(" ", "").replace("[", "").replace("]", "");
         String[] destinationString = splitString(destinationInfo);
-        Log.d(TAG, "Lat: " + destinationString[0] + " Long: " + destinationString[1]+ " Bat: " + destinationString[2]);
+        Log.d(TAG, "Lat: " + destinationString[0] + " Long: " + destinationString[1] + " Bat: " + destinationString[2]);
 
         return Point.fromLngLat(Double.parseDouble(destinationString[1]), Double.parseDouble(destinationString[0]));
     }
@@ -1063,41 +945,44 @@ private void updateSymbolsLocation(@NonNull Symbol s, LatLng updateLocation){
         return s.split(",");
     }
 
-//    private void checkAndEnableGPS(Style style) {
-//        locationComponent = mapboxMap.getLocationComponent();
-//        LocationComponentActivationOptions options = LocationComponentActivationOptions
-//                .builder(requireContext(), style)
-//                .useDefaultLocationEngine(true)
-//                .build();
-//
-//        locationComponent.activateLocationComponent(options);
-//        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//            return;
-//        }
-//        locationComponent.setLocationComponentEnabled(true);
-//
-//        if (!locationComponent.isLocationComponentActivated()) {
-//            // Yêu cầu bật GPS
-//            locationComponent.activateLocationComponent(options);
-//            locationComponent.setLocationComponentEnabled(true);
-//        }
-//    }
+    private void checkAndEnableGPS(Style style) {
+        locationComponent = mapboxMap.getLocationComponent();
+        LocationComponentActivationOptions options = LocationComponentActivationOptions
+                .builder(requireContext(), style)
+                .useDefaultLocationEngine(true)
+                .build();
+
+        locationComponent.activateLocationComponent(options);
+        if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        locationComponent.setLocationComponentEnabled(true);
+
+        if (!locationComponent.isLocationComponentActivated()) {
+            // Yêu cầu bật GPS
+            locationComponent.activateLocationComponent(options);
+            locationComponent.setLocationComponentEnabled(true);
+        }
+    }
 
 
-    @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
 // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(requireContext())) {
 
 // Get an instance of the component
-            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+            locationComponent = mapboxMap.getLocationComponent();
 
 // Activate with options
             locationComponent.activateLocationComponent(
                     LocationComponentActivationOptions.builder(requireContext(), loadedMapStyle).build());
 
 // Enable to make component visible
+            if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                return;
+            }
             locationComponent.setLocationComponentEnabled(true);
 
 // Set the component's camera mode

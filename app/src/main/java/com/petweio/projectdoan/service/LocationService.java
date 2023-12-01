@@ -49,7 +49,7 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        String serverUri = "tcp://vae01477.emqx.cloud:1883";
+        String serverUri = "tcp://petweioapp.online:1883";
         String clientId = MqttAsyncClient.generateClientId();
         Log.d(TAG, "on create: ");
         mqttClient = new MqttAndroidClient(this, serverUri, clientId, new MemoryPersistence());
@@ -71,8 +71,8 @@ public class LocationService extends Service {
         // Đảm bảo tạo một kênh thông báo trước khi sử dụng
         createNotificationChannel();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setUserName("nam");
-        options.setPassword("nam".toCharArray());
+        options.setUserName("admin24");
+        options.setPassword("admin24".toCharArray());
         options.setCleanSession(true);
         options.setAutomaticReconnect(true);
         Thread backgroundThread = new Thread(() -> {

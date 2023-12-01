@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:visibility="invisible"
         android:orientation="vertical"
         android:background="@color/bluegray_800"
         tools:ignore="UselessParent">
@@ -27,16 +28,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:visibility="invisible"
+        android:visibility="visible"
         >
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:text="You haven't devices"
+            android:text="You don't own any devices."
             android:fontFamily="@font/black_ops_one"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:layout_gravity="center"
             tools:ignore="HardcodedText" />
     </LinearLayout>
