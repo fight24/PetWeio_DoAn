@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+flask-firebase-admin
+schedule
+flask-bcrypt
+flask_mqtt
+gunicorn
+flask-login
+flask_admin
