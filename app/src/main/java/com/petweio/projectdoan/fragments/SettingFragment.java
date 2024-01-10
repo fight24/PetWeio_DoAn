@@ -115,13 +115,13 @@ public class SettingFragment extends Fragment {
                 @Override
                 public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                     if(response.isSuccessful()){
-                        Toast.makeText(requireContext(),"You logged out",Toast.LENGTH_SHORT).show();
                         new Handler().postDelayed(() -> {
                             Intent intent = new Intent(requireContext(), IntroductionActivity.class);
+                            Toast.makeText(requireContext(),"You logged out",Toast.LENGTH_SHORT).show();
                             startActivity(intent);
                             requireActivity().overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
                             requireActivity().finish();
-                        }, 5000);
+                        }, 2000);
                     }
                 }
 

@@ -93,24 +93,33 @@ public class SignUpActivity extends MyAppCompatActivity {
         call.enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                ApiResponse signUpResponse = response.body();
+                assert signUpResponse != null;
+                String message = signUpResponse.getMessage();
+                Log.d(TAG, message);
                 if (response.isSuccessful()) {
-                    ApiResponse signUpResponse = response.body();
-                    assert signUpResponse != null;
-                    String message = signUpResponse.getMessage();
                     // Xử lý đăng nhập thành công
-                    Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, message);
-                    new Handler().postDelayed((() ->{
-                        finish();
-                        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
-                    }),2000);
-            }
+                    if(message.equals("User created successfully")){
+                        Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, message);
+                        new Handler().postDelayed((() ->{
+                            finish();
+                            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                        }),2000);
+                    }else{
+                        Toast.makeText(SignUpActivity.this,"The user account may already exist. Please check again", Toast.LENGTH_SHORT).show();
+                    }
+
+            }else{
+                    Toast.makeText(SignUpActivity.this,"User name exist", Toast.LENGTH_SHORT).show();
+                }
+                Log.d(TAG,message);
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
                 Log.e(TAG, Objects.requireNonNull(t.getMessage()));
-                Toast.makeText(SignUpActivity.this,"The user account may already exist. Please check again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this,"Rest sigh up error. Please check again", Toast.LENGTH_SHORT).show();
             }
         });
     }

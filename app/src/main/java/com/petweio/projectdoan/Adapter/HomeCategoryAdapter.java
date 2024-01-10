@@ -3,6 +3,7 @@ package com.petweio.projectdoan.Adapter;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,23 +108,28 @@ public class HomeCategoryAdapter  extends RecyclerView.Adapter<HomeCategoryAdapt
             holder.statusImg.setImageResource(R.color.red_status);
         }
         if(category.getImageName() == null){
-            Picasso.get().load(URL_AVATAR+category.getNameDevice()+"+"+category.getCodeDevice().split("")[category.getCodeDevice().length()]).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    holder.DeviceHomeImg.setImageBitmap(bitmap);
-                    category.setBitmapToString(BitmapEncode.convertBitmapToString(bitmap));
-                }
+            try{
+                Picasso.get().load(URL_AVATAR+category.getNameDevice()+"+"+category.getCodeDevice().split("")[category.getCodeDevice().length()]).into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        holder.DeviceHomeImg.setImageBitmap(bitmap);
+                        category.setBitmapToString(BitmapEncode.convertBitmapToString(bitmap));
+                    }
 
-                @Override
-                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                    holder.DeviceHomeImg.setImageResource(R.drawable.image_not_found_1150x647);
-                }
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        holder.DeviceHomeImg.setImageResource(R.drawable.image_not_found_1150x647);
+                    }
 
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                }
-            });
+                    }
+                });
+            }catch (Exception e) {
+                Log.e("DeBug", "onPrepareLoad error"+e);
+            }
+
        }else{
             holder.DeviceHomeImg.setImageResource(R.drawable.image_not_found_1150x647);
         }

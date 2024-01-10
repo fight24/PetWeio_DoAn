@@ -253,15 +253,16 @@ public class DeviceFragment extends Fragment {
                 edtDistance.setVisibility(View.GONE);
                 btnNoTiOk.setOnClickListener(v1 -> {
                     ((MyApplication)requireActivity().getApplication()).cancelNotification(1);
-                    checkWarning = false;
                     Intent intent = new Intent(requireContext(), LocationService.class);
                     requireActivity().stopService(intent);
+                    checkWarning = false;
                    Call<ApiResponse> call =  apiService.updateDeviceWarning(device.getIdDevice(),new Warning(checkWarning));
                    call.enqueue(new Callback<ApiResponse>() {
                        @Override
                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                            if(response.isSuccessful()){
-                               Log.d(TAG, "Successfully updated device"+response.body());
+                               Log.d(TAG, "Successfully updated device "+checkWarning+response.body());
+
                            }
                        }
 
@@ -285,6 +286,7 @@ public class DeviceFragment extends Fragment {
                     if (!editTextValue.isEmpty()){
                         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(edtDistance.getWindowToken(), 0);
+                        float distance = Float.parseFloat(editTextValue);
 //                        ((MyApplication)requireActivity().getApplication()).triggerNotificationWithBackStack(SplashActivity.class,
 //                                getString(R.string.NEWS_CHANNEL_ID),
 //                                "Notification",
@@ -296,33 +298,19 @@ public class DeviceFragment extends Fragment {
 //                                PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-                        Call<ApiResponse> callUpdateDistance = apiService.updateDeviceDistance(device.getIdDevice(),new Device(Float.parseFloat(editTextValue)));
-                        callUpdateDistance.enqueue(new Callback<ApiResponse>() {
-                            @Override
-                            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                                if(response.isSuccessful()){
 
-
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                                Toast.makeText(requireContext(), "Error update distance "+ t, Toast.LENGTH_SHORT).show();
-                            }
-                        });
 
                         Log.d(TAG,"Notify ok");
 
                         checkWarning = true;
-                        Call<ApiResponse> call =  apiService.updateDeviceWarning(device.getIdDevice(),new Warning(checkWarning));
+                        Call<ApiResponse> call =  apiService.updateDeviceWarningDistance(device.getIdDevice(),new Warning(checkWarning,distance));
                         call.enqueue(new Callback<ApiResponse>() {
                             @Override
                             public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                                 if(response.isSuccessful()){
-                                    Log.d(TAG, "Successfully updated device"+response.body());
+                                    Log.d(TAG, "Successfully updated device "+checkWarning+response.body());
                                     ((MyApplication)requireActivity().getApplication()).triggerNotification(SplashActivity.class,
-                                            getString(R.string.NEWS_CHANNEL_ID),
+                                            getString(R.string.CHANNEL_DISTANCE_ALERT_ID),
                                             "Notification",
                                             "You enabled warning in "+device.getNameDevice(),
                                             "You enabled warning in "+device.getNameDevice(),
@@ -330,6 +318,8 @@ public class DeviceFragment extends Fragment {
                                             true,
                                             getResources().getInteger(R.integer.notificationId),
                                             PendingIntent.FLAG_UPDATE_CURRENT);
+                                    Intent intent = new Intent(requireContext(), LocationService.class);
+                                    requireActivity().startService(intent);
                                     setColorItem(0);
                                     linearLayoutNotification.setVisibility(View.INVISIBLE);
                                 }

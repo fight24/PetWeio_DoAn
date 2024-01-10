@@ -8,7 +8,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiManager {
-    private static final String BASE_URL = "https://18e4-2405-4802-1f04-f9d0-1260-c8da-2689-b979.ngrok-free.app/";
+    private static final String BASE_URL = "http://petweioapp.online/";
     private final ApiService myApiService;
     private static ApiManager instance;
 

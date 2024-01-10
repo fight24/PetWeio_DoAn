@@ -306,7 +306,7 @@
                 <LinearLayout
                     android:background="@drawable/big_buttn_bg"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="55dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginTop="15dp"
@@ -316,20 +316,23 @@
                     <!--       import and integrate         -->
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="29dp"
+                        android:layout_height="match_parent"
                         tools:ignore="TextSizeCheck">
 
                         <ImageView
+                            android:layout_centerVertical="true"
                             android:id="@+id/integrate"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:background="@drawable/integrate"
-                            android:padding="13dp"
+                            android:padding="2dp"
                             android:importantForAccessibility="no" />
 
                         <TextView
+
+
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="20dp"
                             android:layout_toEndOf="@+id/integrate"
@@ -352,7 +355,7 @@
                 <LinearLayout
                     android:background="@drawable/big_buttn_bg"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="55dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginTop="10dp"
@@ -362,18 +365,19 @@
                     <!--       help centre         -->
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <ImageView
+                            android:layout_centerVertical="true"
                             android:id="@+id/help"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:background="@drawable/help"
-                            android:padding="13dp"
+                            android:padding="2dp"
                             android:importantForAccessibility="no" />
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_marginStart="20dp"
                             android:layout_centerVertical="true"
                             android:text="Help Centre"
@@ -396,7 +400,7 @@
                 <LinearLayout
                     android:background="@drawable/big_buttn_bg"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="55dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginTop="10dp"
@@ -408,9 +412,10 @@
                     <RelativeLayout
 
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <ImageView
+                            android:layout_centerVertical="true"
                             android:id="@+id/logoutImage"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
@@ -419,7 +424,7 @@
                             android:importantForAccessibility="no" />
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_marginStart="20dp"
                             android:layout_centerVertical="true"
                             android:text="Log Out"

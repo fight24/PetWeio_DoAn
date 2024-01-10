@@ -38,6 +38,7 @@ import com.petweio.projectdoan.fragments.NotFFoundFragment;
 import com.petweio.projectdoan.fragments.SettingFragment;
 import com.petweio.projectdoan.service.LocationService;
 import com.petweio.projectdoan.service.MqttViewModel;
+import com.petweio.projectdoan.service.MyViewModel;
 import com.petweio.projectdoan.splash.SplashActivity;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -175,7 +176,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
          },5000);
     }
 
-    private void checkDevice(String name, MapFragment mapFragment,NotFFoundFragment notFFoundFragment) {
+    private void checkDevice(String name, MapFragment mapFragment,NotFFoundFragment notFFoundFragment,AboutFragment aboutFragment) {
         Call<List<Device>> call = apiService.showDevicesFromUser(name);
 
         call.enqueue(new Callback<List<Device>>() {
@@ -185,6 +186,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
                     devices = response.body();
                     Log.d(TAG,"Ok show : "+ devices);
                     petLayout(mapFragment,notFFoundFragment,devices);
+                    aboutLayout(aboutFragment,notFFoundFragment,devices);
                     for(Device device : devices){
                         if(device.isIs_warning()){
                             ((MyApplication)getApplication()).triggerNotificationWithBackStack(SplashActivity.class,
@@ -295,14 +297,25 @@ public class BottomNavActivity extends MyAppCompatActivity {
             }
         });
     }
-    private void aboutLayout(AboutFragment aboutFragment){
+    private void aboutLayout(AboutFragment aboutFragment, NotFFoundFragment notFFoundFragment, List<Device> deviceList){
         aboutLayout.setOnClickListener(v -> {
             if(selectTab != 3){
-                //set settings fragment
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, aboutFragment,null)
-                        .commit();
+                if(deviceList.isEmpty()){
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.fragmentContainer, notFFoundFragment,null)
+                            .commit();
+                }else{
+                    MyViewModel viewModel = new ViewModelProvider(this).get(MyViewModel.class);
+
+                    viewModel.setDevices(deviceList);
+
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.fragmentContainer, aboutFragment,null)
+                            .commit();
+                }
+
 
                 petText.setVisibility(View.GONE);
                 homeText.setVisibility(View.GONE);
@@ -424,7 +437,11 @@ public class BottomNavActivity extends MyAppCompatActivity {
 //            settingsLayout(settingFragment);
 //            aboutLayout(aboutFragment);
 //        });
-        functionSetUp();
+        new Handler().postDelayed(()->{
+            if(mqttAndroidClient.isConnected()){
+                functionSetUp();
+            }
+        },2000);
 
     }
     private void functionSetUp(){
@@ -439,7 +456,7 @@ public class BottomNavActivity extends MyAppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MqttViewModel.class);
         viewModel.setMqttData(mqttAndroidClient);
         mapFragment = MapFragment.newInstance(userName);
-        AboutFragment aboutFragment = new AboutFragment();
+        AboutFragment aboutFragment = AboutFragment.newInstance(userName);
         NotFFoundFragment notFFoundFragment = new NotFFoundFragment();
         // set home default
         getSupportFragmentManager().beginTransaction()
@@ -447,11 +464,11 @@ public class BottomNavActivity extends MyAppCompatActivity {
                 .replace(R.id.fragmentContainer, homeFragment,null)
                 .commit();
         runOnUiThread(() -> {
-            checkDevice(userName, mapFragment, notFFoundFragment);
+            checkDevice(userName, mapFragment, notFFoundFragment,aboutFragment);
             homeLayout(homeFragment);
 //            petLayout(mapFragment,notFFoundFragment,devices);
             settingsLayout(settingFragment);
-            aboutLayout(aboutFragment);
+//            aboutLayout(aboutFragment);
         });
     }
     @Override

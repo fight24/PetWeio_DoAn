@@ -22,21 +22,11 @@ public class Device extends DeViceMenuV2 implements Serializable {
     private String imageName;
     @SerializedName("is_status")
     private boolean is_status;
-    @SerializedName("distance")
-    private float distance;
+
     private String bitmapToString;
 
-    public Device(float distance) {
-        this.distance = distance;
-    }
 
-    public float getDistance() {
-        return distance;
-    }
 
-    public void setDistance(float distance) {
-        this.distance = distance;
-    }
 
     public String getBitmapToString() {
         return bitmapToString;
@@ -91,6 +81,9 @@ public class Device extends DeViceMenuV2 implements Serializable {
         this.is_warning = is_warning;
         this.imageName = imageName;
         this.is_status = is_status;
+    }
+
+    public Device() {
     }
 
     public Device(int idDevice, String codeDevice, String nameDevice, String typeDevice, boolean is_warning, String imageName, boolean is_status) {

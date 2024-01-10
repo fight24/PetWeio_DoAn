@@ -83,6 +83,10 @@ public class HomeFragment extends Fragment {
     MqttAndroidClient mqttAndroidClient;
     private void setResult(String contents){
         Log.d(TAG,"setResult: "+contents);
+        if (contents.startsWith("http://")) {
+            // Loại bỏ "http://"
+            contents = contents.substring("http://".length());
+        }
         addDeviceToUserName(userName,contents);
   
     }
@@ -290,7 +294,7 @@ public class HomeFragment extends Fragment {
         Random random = new Random();
         return Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
     }
-    String upCaseFirstWord(@NonNull String name){
+    public String upCaseFirstWord(@NonNull String name){
         return name.substring(0,1).toUpperCase() + name.substring(1);
     }
 

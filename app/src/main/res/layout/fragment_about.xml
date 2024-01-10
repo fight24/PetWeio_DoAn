@@ -3,17 +3,173 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AboutFragment">
+    tools:context=".fragments.AboutFragment"
+    android:background="@color/indigo_50"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Coming Soon"
-        android:fontFamily="@font/black_ops_one"
-        android:textSize="50sp"
-        android:textColor="#757575"
-        android:layout_gravity="center"
-        tools:ignore="HardcodedText" />
+    <LinearLayout
 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:background="@drawable/round_back_todo"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="35dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                tools:ignore="UselessParent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:elevation="10dp"
+                    android:src="@color/white"
+                    tools:ignore="ImageContrastCheck" />
+                <RelativeLayout
+                    android:background="@drawable/round_back_todo_white"
+                    android:layout_width="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="8dp"
+                    android:elevation="4dp"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/txtUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:textSize="14sp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_toEndOf="@+id/imgUser"
+                        android:fontFamily="@font/seymour_one"
+                        android:text="Hi!, UserName"
+                        tools:ignore="HardcodedText" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imgUser"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:elevation="2dp"
+                        app:civ_border_width="1dp"
+                        app:civ_border_color="#FFFFFF"
+                        android:src="@drawable/image_not_found_1150x647"
+                        />
+                </RelativeLayout>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="10dp"
+                    android:src="@color/white"
+                    tools:ignore="ImageContrastCheck" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+
+            android:elevation="4dp"
+            android:background="@drawable/round_back_todo_white_sizesmall"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:background="@drawable/round_back_todo_white_sizesmall"
+                android:elevation="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/black_ops_one"
+                android:text="History"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="@dimen/_31pxh"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="@dimen/_31pxh"
+                android:background="@color/bluegray_800" />
+            <LinearLayout
+                android:id="@+id/loadingScanQr"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#480C0C0C"
+                android:visibility="gone"
+                >
+                <ProgressBar
+
+                    android:indeterminateTint="@color/white"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical"
+                android:paddingStart="5dp"
+                android:layout_gravity="center"
+                android:background="@drawable/search_view_bg"
+                tools:ignore="RtlSymmetry">
+
+               <androidx.appcompat.widget.SearchView
+                   android:id="@+id/searchView"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_margin="5dp"
+                   app:iconifiedByDefault="false"
+                   app:queryHint="Search here ..."
+                   />
+                
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/containerItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical"
+                android:paddingStart="5dp"
+                android:layout_gravity="center"
+                tools:ignore="RtlSymmetry">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvListHistory"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_back_todo_white_sizesmall"
+                    android:elevation="3dp"
+                    android:visibility="visible"
+                    tools:listitem="@layout/layout_items_history"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 </FrameLayout>

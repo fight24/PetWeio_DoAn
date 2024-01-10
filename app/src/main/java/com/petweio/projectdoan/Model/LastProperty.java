@@ -1,7 +1,11 @@
 package com.petweio.projectdoan.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LastProperty {
+    @SerializedName("device_code")
    private String device_code;
+    @SerializedName("latest_property")
    private Property latest_property;
 
     public LastProperty(String device_code, Property latest_property) {

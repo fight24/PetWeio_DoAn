@@ -517,7 +517,7 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void addAndChangeDevice(List<Device> list) {
+    public void addAndChangeDevice(@NonNull List<Device> list) {
 //            devices.add(new DeViceMenuV2(R.color.green_status, R.drawable.ba_battery, R.drawable.images, "Devices01", "None"));
         for (Device device : list) {
             Log.d(TAG, "device"+device.toString());
@@ -545,19 +545,24 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
             deviceCheck = deviceMenu;
             Log.d(TAG, "distance: " + distance);
             Log.d(TAG, "id device: " + deviceMenu.getIdDevice());
-            if (list != null) {
-                setAnimation(SLIDE_LEFT_OUT, listDevice);
-                txtTitleDevice.setText(deviceMenu.getNameDevice());
-                txtValueType.setText(deviceMenu.getTypeDevice());
+            setAnimation(SLIDE_LEFT_OUT, listDevice);
+            txtTitleDevice.setText(deviceMenu.getNameDevice());
+            txtValueType.setText(deviceMenu.getTypeDevice());
+            try{
+                Log.d(TAG, "Bitmap"+deviceMenu.getBitmapToString());
                 deviceImage.setImageBitmap(BitmapEncode.convertStringToBitmap(deviceMenu.getBitmapToString()));
-                if (deviceFeaturesMap != null) {
-                    Log.d(TAG, "Device FeaturesMap");
-                    deviceFeaturesAdapter.setData(deviceFeaturesMap.get("devices/" + deviceMenu.getCodeDevice()));
-                    Objects.requireNonNull(rvFeatures.getAdapter()).notifyDataSetChanged();
-                }
-                new Handler().postDelayed(() -> setAnimation(SLIDE_LEFT_OUT, clickInterceptor), 200);
-                new Handler().postDelayed(() -> setAnimation(SLIDE_UP, containerFeatures), 500);
+            }catch ( Exception e ){
+                Log.e(TAG, "error converting"+e);
+                deviceImage.setImageResource(R.drawable.image_not_found_1150x647);
             }
+
+            if (deviceFeaturesMap != null) {
+                Log.d(TAG, "Device FeaturesMap");
+                deviceFeaturesAdapter.setData(deviceFeaturesMap.get("devices/" + deviceMenu.getCodeDevice()));
+                Objects.requireNonNull(rvFeatures.getAdapter()).notifyDataSetChanged();
+            }
+            new Handler().postDelayed(() -> setAnimation(SLIDE_LEFT_OUT, clickInterceptor), 200);
+            new Handler().postDelayed(() -> setAnimation(SLIDE_UP, containerFeatures), 500);
 
         });
 
@@ -678,13 +683,18 @@ public class MapFragment extends Fragment implements PermissionsListener, OnMapR
             showDevice(userName);
             Log.d(TAG, "onMapReady ");
             fat.setOnClickListener(v -> {
-                checkAndEnableGPS(style);
-                assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
-                setCamera(Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
-                        , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude()));
-                Log.d(TAG, "Vi tri cua toi: " + mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude() + "," + mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
-                mapboxMap.addOnMoveListener(onMoveListener);
-                fat.hide();
+                try{
+                    checkAndEnableGPS(style);
+                    assert mapboxMap.getLocationComponent().getLastKnownLocation() != null;
+                    setCamera(Point.fromLngLat(mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude()
+                            , mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude()));
+                    Log.d(TAG, "Vi tri cua toi: " + mapboxMap.getLocationComponent().getLastKnownLocation().getLongitude() + "," + mapboxMap.getLocationComponent().getLastKnownLocation().getLatitude());
+                    mapboxMap.addOnMoveListener(onMoveListener);
+                    fat.hide();
+                }catch (Exception e){
+                    Toast.makeText(requireContext(),"error",Toast.LENGTH_LONG).show();
+                }
+
 
             });
 

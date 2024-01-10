@@ -12,18 +12,27 @@ public class MyApplication extends Application {
     private static final String TAG = MyApplication.class.getSimpleName();
     public static final String CHANNEL_ID = "Channel_service_pet_id";
     public static final String CHANNEL_Name = "Channel_service_pet_name";
+
     MyAppsNotificationManager  myAppsNotificationManager;
     private String fcmToken;
     @Override
     public void onCreate() {
         super.onCreate();
         createChannelNotification();
+
         myAppsNotificationManager = MyAppsNotificationManager.getInstance(this);
         myAppsNotificationManager.registerNotificationChannelChannel(
                 getString(R.string.NEWS_CHANNEL_ID),
                 getString(R.string.CHANNEL_NEWS),
                 getString(R.string.CHANNEL_DESCRIPTION));
-
+        myAppsNotificationManager.registerNotificationChannelChannel(
+                getString(R.string.CHANNEL_DISTANCE_ALERT_ID),
+                getString(R.string.CHANNEL_DISTANCE_ALERT_NAME),
+                getString(R.string.CHANNEL_DISTANCE_DESCRIPTION));
+        myAppsNotificationManager.registerNotificationChannelChannel(
+                getString(R.string.CHANNEL_STATUS_ALERT_ID),
+                getString(R.string.CHANNEL_STATUS_ALERT_NAME),
+                getString(R.string.CHANNEL_STATUS_DESCRIPTION));
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
 
         FirebaseMessaging.getInstance().getToken()
@@ -50,6 +59,10 @@ public class MyApplication extends Application {
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,CHANNEL_Name, NotificationManager.IMPORTANCE_DEFAULT);
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(channel);
+        NotificationChannel distanceChanel = new NotificationChannel(getString(R.string.CHANNEL_DISTANCE_ALERT_ID),getString(R.string.CHANNEL_DISTANCE_ALERT_NAME), NotificationManager.IMPORTANCE_HIGH);
+        manager.createNotificationChannel(distanceChanel);
+        NotificationChannel statusChannel = new NotificationChannel(getString(R.string.CHANNEL_STATUS_ALERT_ID),getString(R.string.CHANNEL_STATUS_ALERT_NAME), NotificationManager.IMPORTANCE_HIGH);
+        manager.createNotificationChannel(statusChannel);
 
     }
     public void triggerNotification(Class<?> targetNotificationActivity, String channelId, String title, String text, String bigText, int priority, boolean autoCancel, int notificationId, int pendingIntentFlag){

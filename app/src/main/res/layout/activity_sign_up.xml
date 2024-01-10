@@ -49,6 +49,7 @@
                     android:contentDescription="@string/btn_close"
                     android:minHeight="48dp"
                     android:clickable="true"
+                    android:background="@color/green_50"
                     android:src="@drawable/img_close"
                     tools:ignore="ContentDescription,ImageContrastCheck,TouchTargetSizeCheck"
                     tools:src="@drawable/img_close" />

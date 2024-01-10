@@ -3,6 +3,7 @@ package com.petweio.projectdoan.service;
 import com.petweio.projectdoan.Model.ApiResponse;
 import com.petweio.projectdoan.Model.Device;
 import com.petweio.projectdoan.Model.LastProperty;
+import com.petweio.projectdoan.Model.Property;
 import com.petweio.projectdoan.Model.Token;
 import com.petweio.projectdoan.Model.TokenResponse;
 import com.petweio.projectdoan.Model.User;
@@ -41,6 +42,14 @@ public interface ApiService {
 
     @GET("api/latest_property/{code}")
     Call<LastProperty> getLastPropertyByCode(@Path("code") String code);
+    @GET("api/get_50_latest_property/{code}")
+    Call<List<Property>> get50PropertyByCode(@Path("code") String code);
+    @GET("api/get_50_latest_properties")
+    Call<List<Property>> get50Property();
+    @GET("api/properties")
+    Call<List<Property>> getProperties();
+    @GET("api/propertiesbytime")
+    Call<List<Property>> getPropertiesByTime();
     @GET("api/login-with-token/{token}")
     Call<TokenResponse> loginWithToken(@Path("token") String token);
     @DELETE("api/delete-token-by-name/{username}")
@@ -52,8 +61,8 @@ public interface ApiService {
     Call<ApiResponse> updateDeviceWarning(@Path("device_id") int deviceId, @Body Warning isWarning);
     @PUT("api/device/{device_id}/info")
     Call<ApiResponse> updateDeviceInfo(@Path("device_id") int deviceId, @Body Device deviceInfo);
-    @PUT("api/device/{device_id}/Distance")
-    Call<ApiResponse> updateDeviceDistance(@Path("device_id") int deviceId, @Body Device deviceInfo);
+    @PUT("api/device/{device_id}/warning_distance")
+    Call<ApiResponse> updateDeviceWarningDistance(@Path("device_id") int deviceId, @Body Warning isWarning);
     @DELETE("api/remove-device-from-user/{username}/{deviceCode}")
     Call<ApiResponse> removeDeviceFromUser(@Path("username") String username,@Path("deviceCode") String deviceCode);
 }

@@ -3,6 +3,7 @@ package com.petweio.projectdoan.Adapter;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,11 +73,11 @@ public class DeviceMenuAdapter extends RecyclerView.Adapter<DeviceMenuAdapter.De
             return;
         }
         if(deviceMenu.getImageName() == null){
-            Picasso.get().load(URL_AVATAR+deviceMenu.getNameDevice()+"+"+deviceMenu.getCodeDevice().split("")[deviceMenu.getCodeDevice().length()]).into(new Target() {
+            Picasso.get().load(URL_AVATAR+deviceMenu.getNameDevice()+"+"+deviceMenu.getCodeDevice().split("")[deviceMenu.getCodeDevice().length()-1]).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     holder.mImageView.setImageBitmap(bitmap);
-
+                    Log.d("MapFragment", "onBitmapLoaded:"+BitmapEncode.convertBitmapToString(bitmap));
                     deviceMenu.setBitmapToString(BitmapEncode.convertBitmapToString(bitmap));
                 }
 
@@ -90,6 +91,7 @@ public class DeviceMenuAdapter extends RecyclerView.Adapter<DeviceMenuAdapter.De
 
                 }
             });
+
         }else{
             holder.mImageView.setImageResource(R.drawable.image_not_found_1150x647);
         }

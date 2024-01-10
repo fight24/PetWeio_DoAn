@@ -52,6 +52,16 @@ Start !</string>
     <string name="edit">Edit</string>
     <string name="NEWS_CHANNEL_ID">newsProMax</string>
     <string name="CHANNEL_NEWS">NewsProMax</string>
+
     <string name="CHANNEL_DESCRIPTION">Get informed with new updates</string>
     <string name="DEBUG_TAG">DebugNotification</string>
+    <string name="CHANNEL_DISTANCE_ALERT_ID">channel_distance_alert</string>
+    <string name="CHANNEL_DISTANCE_ALERT_NAME">Warning Distance</string>
+
+    <string name="CHANNEL_DISTANCE_DESCRIPTION">Thông báo khi có cảnh báo về khoảng cách</string>
+    <string name="CHANNEL_STATUS_ALERT_ID">channel_status_alert</string>
+    <string name="CHANNEL_STATUS_ALERT_NAME">Warning Status</string>
+
+    <string name="CHANNEL_STATUS_DESCRIPTION">Thông báo khi có cảnh báo về trạng thái</string>
+
 </resources>

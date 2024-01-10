@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="notificationId">1</integer>
+    <integer name="notificationDistanceId">2</integer>
+    <integer name="notificationStatusId">3</integer>
 </resources>

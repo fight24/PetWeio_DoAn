@@ -45,6 +45,7 @@
                         android:minHeight="48dp"
                         android:clickable="true"
                         android:src="@drawable/img_close"
+                        android:background="@color/pink_50"
                         tools:ignore="ContentDescription,ImageContrastCheck,TouchTargetSizeCheck"
                         tools:src="@drawable/img_close" />
 
